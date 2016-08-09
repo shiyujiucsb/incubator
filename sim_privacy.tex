@@ -66,12 +66,24 @@ We want to design an efficient and secure ranked search scheme over encrypted cl
 \item $\mathbf{F}$ \---- The collection of the documents to be outsourced: $\mathbf{F} = \{f_1, f_2, \cdots, f_n\}$ where $f_i$ denotes the $i$-th document.
 \item $\mathbf{C}$ \---- The collection of the encrypted documents in $\mathbf{F}$: $\mathbf{C} = \{c_1, c_2, \cdots, c_n\}$ where each $c_i$ is the encrypted form of $f_i$.
 \item $I$ \---- The index built for $\mathbf{C}$: $I = \{I_1, I_2, \cdots, I_n\}$. Denote by $I_i$ the entry of $c_i$. Each $I_i$ is a vector determined by the keywords and terms in $f_i$.
-\item $q$ \---- The query vector determined by the keywords and terms in the search request.
-\item $\hat{f}$ \---- The top $k$ documents: $\hat{f} = \{\hat{f}_1, \hat{f}_2, \cdots, \hat{f}_k\}$ with the highest similarities to the query $q$.
+\item $\mathbf{W}$ \---- The set of the keywords and terms: $\mathbf{W} = \{W_1, W_2, \cdots, W_m\}$.
+\item $r$ \---- The search request $r$, which contains the keywords and terms that are interesting to the user.
+\item $q$ \---- The query vector determined by the keywords and terms in the search request $r$.
+\item $\hat{F}$ \---- The top $k$ documents: $\hat{F} = \{\hat{f}_1, \hat{f}_2, \cdots, \hat{f}_k\}$ with the highest similarities to the query $q$.
 \end{itemize}
 \emph{Cosine similarity} is a popular measure to evaluate the similarity between two vectors in information retrieval \cite{ATY13,TAJY14}. Given a set of vectors $v_i = (v_{i,1}, v_{i,2}, \cdots, v_{i,m})^T$ where each vector is normalized to a unit length, and has at most $m$ features (if $v_i$ does not have feature $k$, we can set $v_{i,k}$ to be zero), the cosine similarity between vectors is defined as follows:
 $$Sim(v_i,v_j) = \sum_{k=1}^m v_{i,k}\cdot v_{j,k}.$$
 Note that the cosine similarity of two vectors equals to their dot product. We say two vectors are similar if their cosine similarity exceeds some threshold $\tau$. For a ranked search over the documents $\mathbf{F}$, given the query vector $q$, we want the cloud server to return the top $k$ documents $\{\hat{f}_i\}$ with the highest cosine similarities $Sim(\hat{f}_i, q)$.
+
+Based on the above, the secure ranked similarity search scheme can be summarized as follows:
+\begin{itemize}
+\item \textbf{Setup}($1^\lambda$): the data owner takes a security parameter $\lambda$ as input and generates a private key $sk$ that will be used to encrypt the outsourced documents.
+\item \textbf{BuildIndex}($\mathbf{F}$, $sk$): using the key $sk$, the data owner builds an encrypted index $I$ given the documents $\mathbf{F}$. Each entry $I_i$ is an encrypted vector determined by the keywords and terms contained in the document $f_i$.
+\item \textbf{Query}($\mathbf{W}$, $r$): the authorized user computes the query vector $q$ based on the keywords and terms in the search request $r$, and sends the vector $q$ to the cloud server.
+\item \textbf{Search}($q$, $\mathbf{C}$): the cloud server searches over the encrypted documents $\mathbf{C}$ and determines the top $k$ documents $\hat{F}$ that are the most similar to the query vector $q$. We want the server can figure out the most similar $k$ documents as accurate as possible given the encrypted $q$ and index entries $I_i$.
+\end{itemize}
+
+\section{Our Proposed Schemes}
 
 
 \bibliographystyle{./IEEEtran}
