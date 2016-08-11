@@ -174,13 +174,14 @@ $$
 \begin{aligned}
 &\Delta(\mathbf{X}_1, \mathbf{X}_2) \\
 =& \frac{1}{2}\cdot\left\{ \int_{-\infty}^{\ell/2} + \int_{\ell/2}^{+\infty} \right\} \bigg|p[\sum_{k=1}^n X_1^k = x] - p[\sum_{k=1}^n X_2^k = x]\bigg|dx \\
-\leq& 2\Pr[X<\ell/2n: X\sim N(0,\nu^2/n)]-1 \\
-\leq& 2\Pr[X<d/2: X\sim N(0,\nu^2/n)]-1.
+\leq& \Pr[X<\ell/2n] - \Pr[X>\ell/2n] \quad X\sim N(0,2\nu^2/n) \\
+=& 2\Pr[X<\ell/2n: X\sim N(0,2\nu^2/n)]-1 \\
+\leq& 2\Pr[X<d/2: X\sim N(0,2\nu^2/n)]-1.
 \end{aligned}
 $$
 Given an upper bound $\Delta$ of the statistical distance, the differential privacy factor $\varepsilon$ is bounded by
 $$\varepsilon \leq \log \frac{1+\Delta}{1-\Delta}.$$
-Fig. \ref{fig:diff_factors} gives some factor upper bounds under different settings of $n$ and $d$, with $\nu=0.1$.
+Fig. \ref{fig:diff_factors} gives some factor upper bounds under different settings of $n$ and $d$, with $\nu=0.07$.
 
 \begin{figure}
 \centering
