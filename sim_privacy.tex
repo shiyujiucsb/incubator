@@ -168,7 +168,7 @@ $$
 Note that the term $I_i\cdot(q_{i,1}^k-q_{i,2}^k)$ is zero if the two queries are from the same request, and is no more than $d$ otherwise. Let each $\sigma_j^k$ be drawn from normal distribution $N(0,\nu^2)$. Note that the density always increases as we get closer to the mean value of $n$ dimensional normal distribution. Then the statistical distance between $\mathbf{X}_1 = \{X_1^k\}$ and $\mathbf{X}_2 = \{X_2^k\}$ can be computed as follows:
 $$\Delta(\mathbf{X}_1, \mathbf{X}_2) = \frac{1}{2}\int_{-\infty}^{+\infty}\bigg|p[\sum_{k=1}^n X_1^k = x] - p[\sum_{k=1}^n X_2^k = x]\bigg|dx,$$
 where $p(\cdot)$ is the probability density. Let 
-$$\ell = \bigg| \sum_{k=1}^n I_i\cdot(q_{i,1}^k-q_{i,2}^k) \bigg|.$$
+$$\ell = \bigg| \sum_{k=1}^n I_i\cdot(q_{i,1}^k-q_{i,2}^k) \bigg| \leq nd.$$
 Then
 $$
 \begin{aligned}
@@ -181,7 +181,7 @@ $$
 $$
 Given an upper bound $\Delta$ of the statistical distance, the differential privacy factor $\varepsilon$ is bounded by
 $$\varepsilon \leq \log \frac{1+\Delta}{1-\Delta}.$$
-Fig. \ref{fig:diff_factors} gives some factor upper bounds under different settings of $n$ and $d$, with $\nu=0.07$.
+Fig. \ref{fig:diff_factors} gives some factor upper bounds under different settings of $n$ and $d$, with $\nu=0.07$. Note that if the number of samples $n$ and the similarity distance $d$ are small, the achieved upper bound of $\varepsilon$ is close to zero, implying any attacker cannot well detect the relations between queries. Usually the samples owned by the attacker will not be many (e.g., less than 5). Thus by setting appropriate $\nu$, it is possible to guarantee the upper bound of $\varepsilon$ differential privacy if the similarity distance between two requests is within $d$.
 
 \begin{figure}
 \centering
