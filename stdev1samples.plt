@@ -3,10 +3,10 @@ set output 'stdev1samples.eps'
 
 set multiplot
 
-set xlabel "#samples"
+set xlabel "stdev"
 set ylabel "distance"
 set zlabel "factor"
-set xrange [1:10]
+set xrange [0.04:0.10]
 set yrange [0:0.1]
 set zrange [0.0:3.0]
 unset colorbox
