@@ -96,7 +96,7 @@ where the probability is taken over all the random choices of $A$.
 \end{definition}
 We will use differential privacy to study query unlinkability. Let each data set be a collection of $n$ independently sampled query pairs: 
 $$E_i = \{(q_{i,1}^1, q_{i,2}^1), (q_{i,1}^2, q_{i,2}^2), \cdots, (q_{i,1}^n, q_{i,2}^n)\}.$$
-For each data set, the two queries in each pair are either from the same search request, or from two requests $r_1$, $r_2$ with similarity distance $d$, i.e., for any normalized vector $v$, $|Sim(v,r_1) - Sim(v,r_2)| \leq d$. This is the only differing element among $E_i$'s. The attacker gives an algorithm $A$ deciding whether the queries in $D_i$ are from the same request or not. Thus $A$ only outputs a bit: $Range(A) = \{0,1\}$. If for any efficient algorithm $A$, Eq. (\ref{eqn:dp}) holds, then we say our search scheme preserves $\epsilon$-differential privacy under the parameters $(n, d)$.
+For each data set, the two queries in each pair are either from the same search request, or from two requests $r_1$, $r_2$ with similarity distance $d$, i.e., for any normalized vector $v$, $|Sim(v,r_1) - Sim(v,r_2)| \leq d$. This is the only differing element among $E_i$'s. The attacker gives an algorithm $A$ deciding whether the queries in $E_i$ are from the same request or not. Thus $A$ only outputs a bit: $Range(A) = \{0,1\}$. If for any efficient algorithm $A$, Eq. (\ref{eqn:dp}) holds, then we say our search scheme preserves $\epsilon$-differential privacy under the parameters $(n, d)$.
 
 Based on the above, the secure ranked similarity search scheme can be summarized as follows:
 \begin{itemize}
@@ -165,22 +165,43 @@ X_i^k = &(I_i\cdot q_{i,1}^k+\varepsilon_i+\sigma_1^k) - (I_i\cdot q_{i,2}^k+\va
 =&I_i\cdot(q_{i,1}^k-q_{i,2}^k)+(\sigma_1^k-\sigma_2^k).
 \end{aligned}
 $$
-Note that the term $I_i\cdot(q_{i,1}^k-q_{i,2}^k)$ is zero if the two queries are from the same request, and is no more than $d$ otherwise. Let each $\sigma_j^k$ be drawn from normal distribution $N(0,\nu^2)$. Note that the density always increases as we get closer to the mean value of $n$ dimensional normal distribution. Then the statistical distance between $\mathbf{X}_1 = \{X_1^k\}$ and $\mathbf{X}_2 = \{X_2^k\}$ can be computed as follows:
-$$\Delta(\mathbf{X}_1, \mathbf{X}_2) = \frac{1}{2}\int_{-\infty}^{+\infty}\bigg|p[\sum_{k=1}^n X_1^k = x] - p[\sum_{k=1}^n X_2^k = x]\bigg|dx,$$
-where $p(\cdot)$ is the probability density. Let 
-$$\ell = \bigg| \sum_{k=1}^n I_i\cdot(q_{i,1}^k-q_{i,2}^k) \bigg| \leq nd.$$
-Then
+Note that the term $I_i\cdot(q_{i,1}^k-q_{i,2}^k)$ is zero if the two queries are from the same request, and is no more than $d$ otherwise. Let each $\sigma_j^k$ be drawn from normal distribution $N(0,\nu^2)$. Note that the density always increases as we get closer to the mean value of $n$ dimensional normal distribution. Thus if the two queries in all $X_i^k$ are from the same request, $\mathbf{X}_1 = \{X_1^k\}$ and $\mathbf{X}_2 = \{X_2^k\}$ are exactly identically distributed. Otherwise, both of them are normally distributed with variance $2\nu^2$, but the distance between their mean values is not zero. Clearly for any point in the $n$ dimensional Euclidean space, if it is closer to the mean value of $\mathbf{X}_1$, then the probability density of $\mathbf{X}_1$ at that point is higher than that from $\mathbf{X}_2$, and vice versa. Then the statistical distance between $\mathbf{X}_1$ and $\mathbf{X}_2$ can be computed as follows:
+\newcommand{\norm}[1]{| #1 |}
+$$\begin{aligned}
+&\Delta(\mathbf{X}_1, \mathbf{X}_2) 
+= \frac{1}{2}\int_{\mathbb{R}^n} \bigg| p[\mathbf{X}_1=\mathbf{x}] - p[\mathbf{X}_2=\mathbf{x}] \bigg| d\mathbf{x}\\
+=& \frac{1}{2}\int_{\norm{\mathbf{x}-\mathbb{E}[\mathbf{X}_1]} < \norm{\mathbf{x}-\mathbb{E}[\mathbf{X}_2]}} p[\mathbf{X}_1=\mathbf{x}] - p[\mathbf{X}_2=\mathbf{x}]d\mathbf{x} \\
+&+\frac{1}{2}\int_{\norm{\mathbf{x}-\mathbb{E}[\mathbf{X}_1]} > \norm{\mathbf{x}-\mathbb{E}[\mathbf{X}_2]}} p[\mathbf{X}_2=\mathbf{x}] - p[\mathbf{X}_1=\mathbf{x}]d\mathbf{x},
+\end{aligned}$$
+where $p(\cdot)$ is the probability density. 
+Clearly if $I_i\cdot(q_{i,1}^k-q_{i,2}^k)=d$ for each $k$, the two normal random variables $\mathbf{X}_1$ and $\mathbf{X}_2$ are the most distinctly distributed, and thus have the highest statistical distance. Then
 $$
 \begin{aligned}
 &\Delta(\mathbf{X}_1, \mathbf{X}_2) \\
-=& \frac{1}{2}\cdot\left\{ \int_{-\infty}^{\ell/2} + \int_{\ell/2}^{+\infty} \right\} \bigg|p[\sum_{k=1}^n X_1^k = x] - p[\sum_{k=1}^n X_2^k = x]\bigg|dx \\
-\leq& \Pr[X<\ell/2n] - \Pr[X>\ell/2n] \quad X\sim N(0,2\nu^2/n) \\
-=& 2\Pr[X<\ell/2n: X\sim N(0,2\nu^2/n)]-1 \\
-\leq& 2\Pr[X<d/2: X\sim N(0,2\nu^2/n)]-1.
+\leq& \frac{1}{2}\cdot\left\{ \int_{-\infty}^{d/2} + \int_{d/2}^{+\infty} \right\} \bigg|p[\sum_{k=1}^n X_1^k = x] - p[\sum_{k=1}^n X_2^k = x]\bigg|dx \\
+&\quad \textrm{s.t. } X_1^k\sim N(0,2\nu^2), X_2^k\sim N(d,2\nu^2)\\
+=& \int_{-\infty}^{d/2} p[\sum_{k=1}^n X_1^k = x] - p[\sum_{k=1}^n X_2^k = x] dx \\
+=& \Pr[X<d/2n] - \Pr[X>d/2n] \quad \textrm{s.t. } X\sim N(0,2\nu^2/n) \\
+=& 2\Pr[X<d/2: X\sim N(0,2\nu^2/n)]-1.
 \end{aligned}
 $$
-Given an upper bound $\Delta$ of the statistical distance, the differential privacy factor $\varepsilon$ is bounded by
-$$\varepsilon \leq \log \frac{1+\Delta}{1-\Delta}.$$
+We know any randomized algorithm $A$ cannot increase $\Delta(\mathbf{X}_1, \mathbf{X}_2)$, i.e., $\Delta(A(\mathbf{X}_1), A(\mathbf{X}_2)) \leq \Delta(\mathbf{X}_1, \mathbf{X}_2)$. The cloud server tries to determine whether $\mathbf{X}_1, \mathbf{X}_2$ are from the same request, and thus $A$ only outputs one bit. By the definition of statistical distance,
+$$\begin{aligned}
+&\frac{1}{2}|\Pr[A(\mathbf{X}_1)=0]-\Pr[A(\mathbf{X}_2)=0]| \\
+&+ \frac{1}{2}|\Pr[A(\mathbf{X}_1)=1]-\Pr[A(\mathbf{X}_2)=1]| \\
+\leq& \Delta(\mathbf{X}_1, \mathbf{X}_2).
+\end{aligned}$$
+Hence for any subset $S \subseteq \{0,1\}$, we have
+$$|\Pr[A(\mathbf{X}_1)\in S]-\Pr[A(\mathbf{X}_2)\in S]| \leq 2 \Delta(\mathbf{X}_1, \mathbf{X}_2).$$
+$$\Pr[A(\mathbf{X}_1)\in S] - \Delta(\mathbf{X}_1, \mathbf{X}_2) \leq \Pr[A(\mathbf{X}_2)\in S]+\Delta(\mathbf{X}_1, \mathbf{X}_2).$$
+Let $S=\{0\}$. If the probability that $\mathbf{X}_i$ is from the same request is 0.5, then any efficient algorithm $A$ that can distinguish $\mathbf{X}_i$ must have
+$$\frac{1}{2}(1-\Delta(\mathbf{X}_1, \mathbf{X}_2))\leq\Pr[A(\mathbf{X}_i)=0]\leq \frac{1}{2}(1+\Delta(\mathbf{X}_1, \mathbf{X}_2)),$$
+and by $\Pr[A(\mathbf{X}_i)=0]+\Pr[A(\mathbf{X}_i)=1]=1$,
+$$\frac{1}{2}(1-\Delta(\mathbf{X}_1, \mathbf{X}_2))\leq\Pr[A(\mathbf{X}_i)=1]\leq \frac{1}{2}(1+\Delta(\mathbf{X}_1, \mathbf{X}_2)).$$
+Given an upper bound $\Delta$ of the statistical distance, we have 
+$$e^\varepsilon \geq \frac{1+\Delta}{1-\Delta}$$
+and thus a valid differential privacy factor $\varepsilon$ is given by
+$$\varepsilon = \log \frac{1+\Delta}{1-\Delta}.$$
 Fig. \ref{fig:diff_factors} gives some factor upper bounds under different settings of $n$ and $d$, with $\nu=0.07$. Note that if the number of samples $n$ and the similarity distance $d$ are small, the achieved upper bound of $\varepsilon$ is close to zero, implying any attacker cannot well detect the relations between queries. Usually the samples owned by the attacker will not be many (e.g., less than 5). Thus by setting appropriate $\nu$, it is possible to guarantee the upper bound of $\varepsilon$ differential privacy if the similarity distance between two requests is within $d$.
 
 \begin{figure}
