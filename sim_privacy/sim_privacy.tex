@@ -16,7 +16,7 @@
 
 \begin{document}
 
-\title{\Large\bf Preserving Differential Privacy on Ranked Similarity Search over Encrypted Cloud Data}
+\title{\Large\bf New Bound of Privacy Preservation on Ranked Similarity Search over Encrypted Cloud Data}
 \author{Shiyu Ji\\ shiyu@cs.ucsb.edu}
 \date{}
 \maketitle
@@ -83,28 +83,24 @@ $$\Delta(X,Y) = \frac{1}{2}\sum_{\alpha\in\Omega} |\Pr[X=\alpha] - \Pr[Y=\alpha]
 If $X$ and $Y$ are continuous random variables, then the summation above should be replaced by integration.
 An important property of statistical distance is that for any randomized algorithm $A$, we have $\Delta(A(X),A(Y))\leq\Delta(X,Y)$. That is, statistical distance cannot be increased by any randomized algorithm.
 
-\emph{Differential privacy} \cite{Dwork08,DR14} is a popular measure for privacy preserving analysis. 
+\emph{Privacy}. We define privacy in terms of the ability to distinguish two queries from possibly different search requests. The idea is similar to Definition 1 in \cite{K09}.
 \begin{definition}
-We say a randomized algorithm $A$ achieves $\epsilon$-differential privacy if for all data sets $E_i$ and $E_j$ differing on at most one element, and for all subsets $S$ in the range of $A$ (viewed as a function),
-\begin{equation}
-\label{eqn:dp}
-\Pr[A(E_i) \in S] \leq \exp(\epsilon)\cdot \Pr[A(E_j)\in S],
-\end{equation}
-where the probability is taken over all the random choices of $A$.
+Let $\Delta(X, Y)$ be the statistical distance between two probability distributions $X$ and $Y$. Let $A(X)$ be the beliefs on $X$ of a randomized algorithm $A$. We say our scheme preserves the privacy of queries against $A$ if
+$$\Delta(A(X), A(Y)) \leq \delta$$
+for some bound $\delta > 0$. Here $X$ and $Y$ each denote the distribution of one query, and they are independent.
 \end{definition}
-We will use differential privacy to study query unlinkability. Let each data set be an independently sampled query pair: 
-$$E_i = (q_{i,1}, q_{i,2}).$$
-For each data set, the two queries are either from the same search request, or from two requests $r_1$, $r_2$ with similarity distance $d$, i.e., for any normalized vector $v$, $|Sim(v,r_1) - Sim(v,r_2)| \leq d$. This is the only differing element among $E_i$'s. The attacker gives an algorithm $A$ estimating the distance between the queries in $E_i$. Thus $A$ outputs a non-negative number. In this paper we are interested in linking two queries, i.e., when $A$ outputs 0. If for an algorithm $A$, Eq. (\ref{eqn:dp}) holds for $S=\{0\}$, then we say our search scheme preserves $\epsilon$-differential privacy (for query unlinkability only) with distance $d$ for the algorithm $A$.
+We will use the above privacy notion to study query unlinkability. 
+If two queries $X, Y$ are independently generated from the same request, it is clear that $X$ and $Y$ are also identically distributed, and thus their distance is zero. Hence we only need to consider the case when $X$ and $Y$ have some similarity distance $d>0$ between them, i.e., $Sim(X, Z) - Sim(Y,Z) \leq d$ for any normalized vector $Z$.
 
 Based on the above, the secure ranked similarity search scheme can be summarized as follows:
 \begin{itemize}
 \item \textbf{Setup}($1^\lambda$): the data owner takes a security parameter $\lambda$ as input and generates a private key $sk$ that will be used to encrypt the outsourced documents.
 \item \textbf{BuildIndex}($\mathbf{F}$, $sk$): using the key $sk$, the data owner builds an encrypted index $I$ given the documents $\mathbf{F}$. Each entry $I_i$ is an encrypted vector determined by the keywords and terms contained in the document $f_i$.
-\item \textbf{Query}($\mathbf{W}$, $r$): the authorized user computes the query vector $q$ based on the keywords and terms in the search request $r$, and sends $Q$ (the encryption of $q$) to the cloud server. We want the queries $Q$'s to achieve differential privacy to some extent.
+\item \textbf{Query}($\mathbf{W}$, $r$): the authorized user computes the query vector $q$ based on the keywords and terms in the search request $r$, and sends $Q$ (the encryption of $q$) to the cloud server. We want the queries $Q$'s to achieve privacy for some upper bound.
 \item \textbf{Search}($Q$, $\mathbf{C}$): the cloud server searches over the encrypted documents $\mathbf{C}$ and determines the top $k$ documents $\hat{F}$ that are the most similar to the query vector $q$. We want the server can figure out the most similar $k$ documents as accurate as possible given the encrypted $q$ and index entries $I_i$.
 \end{itemize}
 
-\section{Our Proposed Schemes}
+\section{Our Proposed Scheme}
 In this section we firstly recall the secure dot product encryption \cite{Cao14} (which was adapted from \cite{Wong09}). Then we propose our scheme for ranked similarity search.
 
 \subsection{Secure Dot Product Encryption}
@@ -150,7 +146,7 @@ It is not difficult to see now the cloud server can compute the value as follows
 Clearly if the bound of $\varepsilon_i+\sigma$ is small enough, the value above can be used to rank the similarities, since it is proportional to $Sim(I_i, q)$. However, we will use $\varepsilon_i$ and $\sigma$ to preserve the privacy of similarity and query unlinkability. 
 
 \section{Security Analysis}
-In this section we assume the attacker has more knowledge than only ciphertext. In particular, we assume the attacker has a precise estimation of $r$ and $t$ as above, and we also assume the attacker has information of keyword frequency distribution based on historic experience. We make such an assumption since we have no way to consider all the strategies the attacker could possibly take. If our scheme can achieve security up to a higher standard, we can make sure it is also secure in the real world. We can show that our scheme can achieve differential privacy under certain settings by using well known computation-theoretical arguments.
+In this section we assume the attacker has more knowledge than only ciphertext. In particular, we assume the attacker has a precise estimation of $r$ and $t$ as above, and we also assume the attacker has information of keyword frequency distribution based on historic experience. We make such an assumption since we have no way to consider all the strategies the attacker could possibly take. If our scheme can achieve security up to a higher standard, we can make sure it is also secure in the real world. We can show that our scheme can achieve privacy under certain settings by using well known computation-theoretical arguments.
 
 \subsection{Similarity Privacy}
 Since we assume the attacker knows the value of $r$, $I_i\cdot q+\varepsilon_i+\sigma$ is exposed to the cloud server. However the cloud server is not sure about the value of $\varepsilon_i+\sigma$, which is chosen at random and different for every query and every index entry. This randomness can hide the true similarity value $I_i\cdot q$. Hence the cloud server cannot learn the exact similarity between $I_i$ and $q$. On the other hand, the bound of $\varepsilon_i+\sigma$ cannot be too large; otherwise it will decrease the accuracy of our ranked search scheme. If the bound of randomness is very small, then the accuracy is high but the similarity privacy can be leaked. If the bound is very large, then the privacy is well preserved, but the accuracy can be significantly decreased.
@@ -168,16 +164,16 @@ Note that the term $I_i\cdot(q_{i,1}-q_{i,2})$ is zero if the two queries are fr
 $$\begin{aligned}
 &\Delta(X_1, X_2) 
 = \frac{1}{2}\int_{-\infty}^{+\infty} \bigg| p[X_1=x] - p[X_2=x] \bigg| dx\\
-=& \frac{1}{2}\int_{\norm{x-\mathbb{E}[X_1]} < \norm{x-\mathbb{E}[X_2]}} p[X_1=x] - p[X_2=x]dx \\
-&+\frac{1}{2}\int_{\norm{x-\mathbb{E}[X_1]} > \norm{x-\mathbb{E}[X_2]}} p[X_2=x] - p[X_1=x]dx,
+=& \frac{1}{2}\int_{\norm{x-\mathbb{E}[X_1]} < \norm{x-\mathbb{E}[X_2]}} p[X_1=x] - p[X_2=x]dx 
++\frac{1}{2}\int_{\norm{x-\mathbb{E}[X_1]} > \norm{x-\mathbb{E}[X_2]}} p[X_2=x] - p[X_1=x]dx,
 \end{aligned}$$
 where $p(\cdot)$ is the probability density. 
 Clearly if $I_i\cdot(q_{i,1}-q_{i,2})=d$, the two normal random variables $X_1$ and $X_2$ are the most distinctly distributed, and thus have the highest statistical distance. Then
 $$
 \begin{aligned}
 &\Delta(X_1, X_2) \\
-\leq& \frac{1}{2}\cdot\left\{ \int_{-\infty}^{d/2} + \int_{d/2}^{+\infty} \right\} \bigg|p[X_1 = x] - p[X_2 = x]\bigg|dx \\
-&\quad \textrm{s.t. } X_1\sim N(0,2\nu^2), X_2\sim N(d,2\nu^2)\\
+\leq& \frac{1}{2}\cdot\left\{ \int_{-\infty}^{d/2} + \int_{d/2}^{+\infty} \right\} \bigg|p[X_1 = x] - p[X_2 = x]\bigg|dx 
+\quad \textrm{s.t. } X_1\sim N(0,2\nu^2), X_2\sim N(d,2\nu^2)\\
 =& \int_{-\infty}^{d/2} p[X_1 = x] - p[X_2 = x] dx \\
 =& \Pr[X<d/2] - \Pr[X>d/2] \quad \textrm{s.t. } X\sim N(0,2\nu^2) \\
 =& 2\Pr[X<d/2: X\sim N(0,2\nu^2)]-1.
@@ -185,28 +181,21 @@ $$
 $$
 We know any randomized algorithm $A$ cannot increase $\Delta(X_1, X_2)$, i.e., $\Delta(A(X_1), A(X_2)) \leq \Delta(X_1, X_2)$. The cloud server tries to determine whether $X_1, X_2$ are from the same request, and thus $A$ only outputs one bit. By the definition of statistical distance,
 $$\begin{aligned}
-&\frac{1}{2}|\Pr[A(X_1)=0]-\Pr[A(X_2)=0]| \\
-&+ \frac{1}{2}|\Pr[A(X_1)=1]-\Pr[A(X_2)=1]| 
+&\frac{1}{2}|\Pr[A(X_1)=0]-\Pr[A(X_2)=0]| 
++ \frac{1}{2}|\Pr[A(X_1)=1]-\Pr[A(X_2)=1]| 
 \leq \Delta(X_1, X_2).
 \end{aligned}$$
 Hence for either $0\in S$ or $1\in S$, we have
-$$|\Pr[A(X_1)\in S]-\Pr[A(X_2)\in S]| \leq 2 \Delta(X_1, X_2).$$
-For any algorithm $A$ that always outputs 0 when the input is a pair of queries from the same request ($\Pr[A(X_1)=0]=1$), we have
-$$|1-\Pr[A(X_2)=0]| \leq 2 \Delta(X_1, X_2).$$
-Thus
-$$\Pr[A(X_2)=0] \geq 1-2 \Delta(X_1, X_2).$$
-Given an upper bound $\Delta$ of $\Delta(X_1, X_2)$:
-$$\Delta(X_1, X_2) \leq 2\Pr[X<d/2: X\sim N(0,2\nu^2)]-1 =: \Delta,$$
-we have
-$$\Pr[A(X_2)=0] \geq (1-2 \Delta)\Pr[A(X_1)=0].$$
-This implies that even though $A$ can detect any pair of queries from the same request, for the pairs of queries from different requests (with similarity distance $d$), $A$ will output 0 as a false positive. Clearly a valid factor $\varepsilon$ should satisfy:
-$$\exp(\varepsilon) = \frac{1}{1-2\Delta}.$$
-Fig. \ref{fig:diff_factors} gives some factor upper bounds under different settings of $\nu$ and $d$. Note that if the similarity distance $d$ are small, the achieved upper bound of $\varepsilon$ is close to zero, implying any attacker cannot well detect the relations between queries. Thus by setting appropriate $\nu$, it is possible to guarantee the upper bound of $\varepsilon$ differential privacy if the similarity distance between two requests is within $d$.
+$$\Pr[A(X_1)\in S]-\Pr[A(X_2)\in S] \leq 2 \Delta(X_1, X_2).$$
+Note that we have found an upper bound for $\Delta(X_1, X_2)$. Thus we have bounded the advantage to distinguish these two queries for \emph{any} adversary. Now the remaining question is to see whether the value of the upper bound is small enough.
+
+Fig. \ref{fig:diff_factors} gives some upper bounds under different settings of $\nu$ and $d$. Note that if the similarity distance $d$ are small, the achieved upper bound of distinguishing advantage is close to zero, implying any attacker cannot well detect the relations between queries. Thus by setting appropriate $\nu$, it is possible to guarantee that the advantage of \emph{any} attacker must be upper bounded if the similarity distance between two requests is within $d$. For two queries with too large similarity distance between them, it is clearly impossible to hide their difference for privacy preserving in our scheme, since otherwise the utility of ranked search cannot be satisfied.
+Hence we have established an upper bound of how much degree of privacy our scheme can preserve.
 
 \begin{figure}
 \centering
 \includegraphics[width=0.45\textwidth]{stdev1samples.eps}
-\caption{The upper bounds of differential factors. Here $n$ is the number of samples, and $d$ is the similarity distance between two search requests.}
+\caption{The upper bounds of statistical distance $\Delta(X, Y)$. Here $\nu$ is the standard deviation of noise, and $d$ is the similarity distance between two search requests of $X$ and $Y$.}
 \label{fig:diff_factors}
 \end{figure}
 

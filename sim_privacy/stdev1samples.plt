@@ -5,10 +5,10 @@ set multiplot
 
 set xlabel "stdev"
 set ylabel "distance"
-set zlabel "factor"
-set xrange [0.04:0.10]
-set yrange [0:0.1]
-set zrange [0.0:3.0]
+set zlabel "Delta"
+set xrange [0.05:0.10]
+set yrange [0:0.10]
+set zrange [0.0:0.5]
 unset colorbox
 set view 50,20
 set style fill solid 0.6
