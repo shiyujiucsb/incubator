@@ -4,6 +4,7 @@
 \begin{document}
 \title{\Large\bf On Credit-based Incentive Mechanisms of Voluntary User Comment Reviewing in Social Networks}
 \author{Shiyu Ji}
+\date{}
 \maketitle
 
 \begin{abstract}
@@ -11,7 +12,7 @@ With the recent advance of micro-blogs and social networks, people can view and 
 However, it is also a big concern that the malicious users keep polluting the cyber environment by scamming, spamming or repeatedly advertising.
 So far the most common way to detect and report malicious comments is based on voluntary reviewing from honest users. 
 To encourage contribution, very often some non-monetary credits will be given to an honest user who validly reports a malicious comment. 
-In this paper we argue that such credit-based incentive mechanisms should fail in most cases:
+In this note we argue that such credit-based incentive mechanisms should fail in most cases:
 if reporting a malicious comment receives diminishing revenue, then in the long term no rational honest user will participate in comment reviewing.
 \end{abstract}
 
@@ -32,7 +33,7 @@ However, as we will show, these credit-based incentive mechanisms can barely wor
 It turns out the major problem is that the revenue for each report diminishes as the user submits more and more reports. Since the credits are only for reputation and website use, they cannot be refunded or turn into any monetary form. As more and more users join the website, the value of credits will decrease since 1) there are more and more credits distributed to the users, and 2) a new user is often given some initial credits. These will cause inflation-like phenomenon on the credits. However, to submit an honest report always requires a certain amount of human effort. When the reporting cost is larger than the diminishing revenue, any rational honest users shall refuse to continue contributing since their utilities are in deficit. We will explain more details in the following section.
 
 \section{The Game When Reviewing a User Comment}
-Upon receiving a comment from another user, an honest user has three options to choose: 1) only read it, 2) read it and report if it violates community rules, and 3) simply discard it. Clearly if the user discards the comment, she will not gain or lose anything, and hence receives zero utility $U_3 = 0$. We need to analyze the rest two cases.
+Upon receiving a comment from another user, an honest user has three options to choose: 1) read the comment only, 2) read the comment and report to an administrator if it violates community rules, and 3) simply discard the comment. Clearly if the user discards the comment, she will not gain or lose anything, and hence receives zero utility $U_3 = 0$. We need to analyze the rest two cases.
 \subsection{Notations and Preliminaries}
 \begin{itemize}
 \item $c_r$ \--- the human effort/cost to read a comment
@@ -75,13 +76,19 @@ Given a non-negligible $p$, we expect the number of credits $r$ to be as large a
 
 If there is a maximum amount of credits a user can get, then after reaching the maximum, the honest user will not gain anything. Then the unit revenue $u$ becomes zero. Thus the condition above can never be satisfied. Any incentive mechanism with a credit bound asks honest users to leave after they reach the full rank.
 
+In general, the revenue function $R(n)$, where $n$ is the number of valid reports submitted, is submodular \cite{RS09}. The marginal revenue $\Delta R(n) := R(n+1)-R(n)$ decreases as $n$ grows, e.g., $R(n) \propto \log{n}$. Thus the unit revenue $u(n)$ is
+$$u(n) = \frac{R(n)}{n} \propto \frac{\log{n}}{n}.$$
+Suppose $R(n) = \alpha\log{n}+\beta$ for some $\alpha\in\mathbb{R}^+$ and $\beta\in\mathbb{R}$. Then the limit of unit revenue is zero.
+$$\lim_{n\to +\infty}u(n) = \lim_{n\to +\infty}\frac{\alpha\log{n}+\beta}{n} = 0.$$
+This implies in the cases of submodular revenue (very common in the real world), there is no way to keep any rational honest user contributing valid reports in the long term only by using credit-based incentives.
+
 Hence in the long term, the rational honest users shall simply discard all the user comments from the website. They will just read the news, watch the video and nothing more. They make such a choice just because they do not want deficit. While the honest users quit, the malicious users are still active when making comments. This will further deteriorate the commentary environment.
 
-\section{Conclusion}
-This paper explains 1) why many senior and honest users eventually quit the online commentary community, becoming increasingly closed against comments from others, and 2) why the reputation or credit-based incentive mechanisms fail to motivate the users to review comments in the long term. As long as the credits cannot be refunded into monetary form, it is not a good idea to base such an incentive mechanism, which motivates reporting user comments, solely on credits.
-
 \section{Remarks on Irrational Users}
-An important assumption in this paper is that the honest users are \emph{rational}. However in the real world, some honest users will do something irrational, e.g., getting into a comment-war with a malicious user, wasting time on useless comments for nothing, etc. For the malicious users, it is more difficult to predict their choices. Usually it is very difficult to model irrational entities. More subtle models and theories may be left as future work.
+An important assumption in this note is that the honest users are \emph{rational}. However in the real world, some honest users will do something irrational, e.g., getting into a comment-war with a malicious user, wasting time on useless comments for nothing, etc. For the malicious users, it is more difficult to predict their choices. Usually it is very difficult to model irrational entities. More subtle models and theories may be left as future work.
+
+\section{Conclusion}
+This note explains 1) why many senior and honest users eventually quit the online commentary community, becoming increasingly closed against comments from others, and 2) why the reputation or credit-based incentive mechanisms fail to motivate the users to review comments in the long term. As long as the credits cannot be refunded into monetary form, it is not a good idea to base such an incentive mechanism, which motivates reporting user comments, solely on credits.
 
 \begin{thebibliography}{19}
 \bibitem{E07}
@@ -116,6 +123,9 @@ David Chaum, Amos Fiat, and Moni Naor. \textit{Untraceable electronic cash.} Pro
 
 \bibitem{BCoin}
 Satoshi Nakamoto. \textit{Bitcoin: A peer-to-peer electronic cash system.} (2008).
+
+\bibitem{RS09}
+Shaddin Dughmi, Tim Roughgarden, and Mukund Sundararajan. \textit{Revenue submodularity.} Proceedings of the 10th ACM conference on Electronic commerce. ACM, 2009.
 \end{thebibliography}
 
 Shiyu Ji: Department of Computer Science, UCSB.

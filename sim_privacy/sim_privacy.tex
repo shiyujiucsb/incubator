@@ -1,16 +1,14 @@
-\documentclass{IEEEtran}
+\documentclass{article}
 
-\usepackage{graphicx}
+\usepackage{fullpage, graphicx}
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{amsmath}
-\usepackage{algorithm}
-\usepackage{algorithmicx}
-\usepackage{algpseudocode}
-\usepackage{booktabs}
-\usepackage{color}
-
-\newcommand{\comment}[1]{}
+%\usepackage{algorithm}
+%\usepackage{algorithmicx}
+%\usepackage{algpseudocode}
+%\usepackage{booktabs}
+%\usepackage{color}
 
 %\renewcommand{\baselinestretch}{0.95}
 %\setlength{\textfloatsep}{0.1cm}
@@ -18,9 +16,9 @@
 
 \begin{document}
 
-\title{Preserving Differential Privacy on Ranked Similarity Search over Encrypted Cloud Data}
-\author{
-Shiyu Ji}
+\title{\Large\bf Preserving Differential Privacy on Ranked Similarity Search over Encrypted Cloud Data}
+\author{Shiyu Ji\\ shiyu@cs.ucsb.edu}
+\date{}
 \maketitle
 
 \newtheorem{definition}{Definition}
@@ -37,7 +35,7 @@ Shiyu Ji}
 
 \begin{figure}
 \centering
-\includegraphics[width=0.45\textwidth]{system_model.eps}
+\includegraphics[width=0.6\textwidth]{system_model.eps}
 \caption{The architecture of ranked similarity search over encrypted cloud data.}
 \label{fig:system_model}
 \end{figure}
