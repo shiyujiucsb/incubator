@@ -1,6 +1,7 @@
-\documentclass{article}
+\documentclass{IEEEtran}
 
-\usepackage{fullpage, graphicx}
+\usepackage{graphicx}
+%\usepackage{fullpage}
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{amsmath}
@@ -16,7 +17,7 @@
 
 \begin{document}
 
-\title{\Large\bf New Bound of Privacy Preservation on Ranked Similarity Search over Encrypted Cloud Data}
+\title{\Large\bf Privacy Preservation on Ranked Soft Similarity Search over Encrypted Cloud Data}
 \author{Shiyu Ji\\ shiyu@cs.ucsb.edu}
 \date{}
 \maketitle
@@ -30,12 +31,20 @@
 \newtheorem{corollary}{Corollary}
 \theoremstyle{plain}
 
+\section{Introduction}
+
+We summarize our major contributions as follows:
+\begin{enumerate}
+\item We are the first to formalize the privacy of query unlinkability for searchable symmetric encryption over cloud data. We also propose an improved encryption and search scheme that can achieve reasonable bounds of privacy leakage up to our definition.
+\item We also investigate the possibility to do soft similarity search over encrypted cloud data. We find that it is possible for the cloud server to search and rank over encrypted documents, without knowing the exact parameters of soft similarity, e.g., the entries in the similarity matrices.
+\end{enumerate}
+
 \section{Problem Formulation}
 \subsection{The System and Threat Model}
 
 \begin{figure}
 \centering
-\includegraphics[width=0.6\textwidth]{system_model.eps}
+\includegraphics[width=0.8\linewidth]{system_model.eps}
 \caption{The architecture of ranked similarity search over encrypted cloud data.}
 \label{fig:system_model}
 \end{figure}
@@ -78,7 +87,13 @@ We want to design an efficient and secure ranked search scheme over encrypted cl
 $$Sim(v_i,v_j) = \sum_{k=1}^m v_{i,k}\cdot v_{j,k}.$$
 Note that the cosine similarity of two vectors equals to their dot product. We say two vectors are similar if their cosine similarity exceeds some threshold $\tau$. For a ranked search over the documents $\mathbf{F}$, given the query vector $q$, we want the cloud server to return the top $k$ documents $\{\hat{f}_i\}$ with the highest cosine similarities $Sim(\hat{f}_i, q)$. In post-processing, the search user can decrypt the returned $k$ documents and check whether among them there are some similar ones, i.e., with similarities larger than the threshold $\tau$.
 
-We define the similarity distance between two normalized vectors $X$ and $Y$ as the minimum value $d$ such that $|Sim(X, q) - Sim(Y, q)|<d$ for any normalized vector $q$.
+\emph{Soft cosine similarity} is a generalized version of cosine similarity. The major difference is that for soft similarity, we assume there can be similarity between features. For example, in medical patient profiles, age and height are two different features, but their values often share some similarities: adults usually have more heights than young people. However, age and gender are two features that are almost orthogonal. With the above observation, we can use a real number $s_{ij}$ between 0 and 1 to represent the similarity between the features $i$ and $j$. Considering all the combinations, we have a $m \times m$ matrix $S$ called similarity matrix, where $m$ is the number of features, and each entry $s_{ij}$ of $S$ is the similarity between features. The soft cosine similarity between the vectors $u$ and $v$ is defined as follows:
+$$SoftSim(u, v) = \frac{\sum_{i,j}s_{ij}u_i v_j}{(\sum_{i,j}s_{ij}u_i u_j)(\sum_{i,j}s_{ij}v_i v_j)}.$$
+If the similarity matrix $S$ is a unit matrix, then the soft cosine similarity is the same as the classical cosine similarity.
+
+\emph{Similarity distance} between two normalized vectors $X$ and $Y$ is defined as the minimum value $d$ such that 
+$$|Sim(X, q) - Sim(Y, q)|<d$$ 
+for any normalized vector $q$. Here we can choose (soft) cosine similarity. For other similarity measure, a distance concept can be similarly established.
 
 \emph{Statistical Distance} \cite{AB09,G95} defines a distance measure between two distributions. Consider two random variables $X$ and $Y$ defined over domain $\Omega$. The statistical distance between $X$ and $Y$ is defined as
 $$\Delta(X,Y) = \frac{1}{2}\sum_{\alpha\in\Omega} |\Pr[X=\alpha] - \Pr[Y=\alpha]|.$$
@@ -87,19 +102,19 @@ An important property of statistical distance is that for any randomized algorit
 
 \emph{Unlinkable Privacy}. We define unlinkable privacy in terms of the ability to distinguish two queries from possibly different search requests. The idea is similar to Definition 1 in \cite{K09}.
 \begin{definition}
-Let $\Delta(X, Y)$ be the statistical distance between two probability distributions $X$ and $Y$. Let $A(X)$ be the beliefs on $X$ of a randomized algorithm $A$. Given two query distributions $X$ and $Y$ with similarity distance $d$, we say our scheme preserves the $(\delta, d)$-unlinkable privacy of queries against $A$ if
+Let $\Delta(X, Y)$ be the statistical distance between two probability distributions $X$ and $Y$. Let $A(X)$ be the beliefs on $X$ of a randomized algorithm $A$. Given two query distributions $X$ and $Y$ generated by our scheme with similarity distance $d$, we say our scheme preserves the $(\delta, d)$-unlinkable privacy of queries against $A$ if
 $$\Delta(A(X), A(Y)) \leq \delta$$
 for some bound $\delta > 0$. Here $X$ and $Y$ are independent from each other.
 \end{definition}
 We will use the above privacy notion to study query unlinkability. 
 If two queries $X, Y$ are independently generated from the same request, it is clear that $X$ and $Y$ are also identically distributed, and thus their distance is zero. Hence we only need to consider the case when $X$ and $Y$ have some similarity distance $d>0$ between them, i.e., $|Sim(X, Z) - Sim(Y,Z)| \leq d$ for any normalized query vector $Z$.
 
-Based on the above, the secure ranked similarity search scheme can be summarized as follows:
+\emph{Secure ranked similarity search scheme} can be summarized as follows:
 \begin{itemize}
 \item \textbf{Setup}($1^\lambda$): the data owner takes a security parameter $\lambda$ as input and generates a private key $sk$ that will be used to encrypt the outsourced documents.
 \item \textbf{BuildIndex}($\mathbf{F}$, $sk$): using the key $sk$, the data owner builds an encrypted index $I$ given the documents $\mathbf{F}$. Each entry $I_i$ is an encrypted vector determined by the keywords and index terms contained in the document $f_i$.
 \item \textbf{Query}($\mathbf{W}$, $sk$, $r$): the authorized user computes the query vector $q$ based on the keywords and terms in the search request $r$, and sends $Q$ (the encryption of $q$ by key $sk$) to the cloud server. We want two similar queries $Q$'s can achieve unlinkable privacy for some upper bound.
-\item \textbf{Search}($Q$, $k$, $\mathbf{C}$): the cloud server searches over the encrypted documents $\mathbf{C}$ and determines the top $k$ documents $\hat{F}$ that are the most similar to the query vector $q$. We want the server can figure out the most similar $k$ documents as accurate as possible given the encrypted $q$ and index entries $I_i$.
+\item \textbf{Search}($Q$, $k$, $\mathbf{C}$): the cloud server searches over the encrypted documents $\mathbf{C}$ and determines the top $k$ documents $\hat{F}$ that are the most similar to the query vector $q$. We want the server can figure out the most similar $k$ documents as accurate as possible given the encrypted $q$ and index entries $I_i$. The similarity computation can be based on (soft) cosine similarity.
 \end{itemize}
 
 \section{Our Proposed Scheme}
@@ -116,7 +131,8 @@ Then $D_i$ is randomly split into two random vectors $D_i'$ and $D_i''$, and $Q$
 \begin{aligned}
 &(M_1D_i', M_2D_i'')\cdot(M_1^{-1}Q', M_2^{-1}Q'') \\
 =&D_i'\cdot Q' + D_i''\cdot Q''\\
-=&\sum_{S[k]=0}D'_i[k] Q'[k] + D''_i[k] Q''[k] + \sum_{S[j]=1} D_i'[j] Q'[j] + D_i''[j] Q''[j]\\
+=&\sum_{S[k]=0}D'_i[k] Q'[k] + D''_i[k] Q''[k] \\
+&+ \sum_{S[j]=1} D_i'[j] Q'[j] + D_i''[j] Q''[j]\\
 =&\sum_{S[k]=0}D_i[k](Q'[k] + Q''[k]) + \sum_{S[j]=1} (D_i'[j]+ D_i''[j])Q[j]\\
 =&\sum_{S[k]=0}D_i[k]Q[k] + \sum_{S[j]=1} D_i[j]Q[j]\\
 =&D_i \cdot Q = (I_i,\varepsilon_i,1)\cdot (rq,r,t)\\
@@ -143,14 +159,12 @@ After all the entries have been encrypted, we divide the entries into partitions
 \item \textbf{Search}($Q$, $k$, $\mathbf{C}$): the cloud server securely searches over the encrypted index of each partition, and determines the top $k$ documents $\hat{F}$ with the highest values of $D_i\cdot Q$. At last the server returns the documents $\hat{F}$ to the user.
 \end{itemize}
 It is not difficult to see now the cloud server can compute the value as follows:
-\begin{equation*}
-\begin{aligned}
+$$\begin{aligned}
 &(M_1D_i', M_2D_i'')\cdot(M_1^{-1}Q', M_2^{-1}Q'') \\
 =&D_i'\cdot Q' + D_i''\cdot Q''\\
 =&D_i \cdot Q = (I_i,\varepsilon_i,1)\cdot (rq,r,r\sigma)\\
 =&r(I_i\cdot q+\varepsilon_i+\sigma).
-\end{aligned}
-\end{equation*}
+\end{aligned}$$
 Clearly if the bound of $\varepsilon_i+\sigma$ is small enough, the value above can be used to rank the similarities, since it is proportional to $Sim(I_i, q)$. However, we will use $\varepsilon_i$ and $\sigma$ to preserve the privacy of similarity and query unlinkability. 
 
 \section{Security Analysis}
@@ -172,29 +186,21 @@ Note that the term $I_i\cdot(q_{i,1}-q_{i,2})$ is zero if the two queries are fr
 $$\begin{aligned}
 &\Delta(X_1, X_2) 
 = \frac{1}{2}\int_{-\infty}^{+\infty} \bigg| p[X_1=x] - p[X_2=x] \bigg| dx\\
-=& \frac{1}{2}\int_{\norm{x-\mathbb{E}[X_1]} < \norm{x-\mathbb{E}[X_2]}} p[X_1=x] - p[X_2=x]dx 
-+\frac{1}{2}\int_{\norm{x-\mathbb{E}[X_1]} > \norm{x-\mathbb{E}[X_2]}} p[X_2=x] - p[X_1=x]dx,
+=& \frac{1}{2}\int_{\norm{x-\mathbb{E}[X_1]} < \norm{x-\mathbb{E}[X_2]}} p[X_1=x] - p[X_2=x]dx \\
+&+\frac{1}{2}\int_{\norm{x-\mathbb{E}[X_1]} > \norm{x-\mathbb{E}[X_2]}} p[X_2=x] - p[X_1=x]dx,
 \end{aligned}$$
 where $p(\cdot)$ is the probability density. 
 Clearly if $I_i\cdot(q_{i,1}-q_{i,2})=d$, the two normal random variables $X_1$ and $X_2$ are the most distinctly distributed, and thus have the highest statistical distance. Then
-$$
-\begin{aligned}
+$$\begin{aligned}
 &\Delta(X_1, X_2) \\
-\leq& \frac{1}{2}\cdot\left\{ \int_{-\infty}^{d/2} + \int_{d/2}^{+\infty} \right\} \bigg|p[X_1 = x] - p[X_2 = x]\bigg|dx 
-\quad \textrm{s.t. } X_1\sim N(0,2\nu^2), X_2\sim N(d,2\nu^2)\\
+\leq& \frac{1}{2}\cdot\left\{ \int_{-\infty}^{d/2} + \int_{d/2}^{+\infty} \right\} \bigg|p[X_1 = x] - p[X_2 = x]\bigg|dx \\
+&\quad \textrm{s.t. } X_1\sim N(0,2\nu^2), X_2\sim N(d,2\nu^2)\\
 =& \int_{-\infty}^{d/2} p[X_1 = x] - p[X_2 = x] dx \\
 =& \Pr[X<d/2] - \Pr[X>d/2] \quad \textrm{s.t. } X\sim N(0,2\nu^2) \\
 =& 2\Pr[X<d/2: X\sim N(0,2\nu^2)]-1.
-\end{aligned}
-$$
-We know any randomized algorithm $A$ cannot increase $\Delta(X_1, X_2)$, i.e., $\Delta(A(X_1), A(X_2)) \leq \Delta(X_1, X_2)$. The cloud server tries to determine whether $X_1, X_2$ are from the same request, and thus $A$ only outputs one bit. By the definition of statistical distance,
-$$\begin{aligned}
-&\frac{1}{2}|\Pr[A(X_1)=0]-\Pr[A(X_2)=0]| 
-+ \frac{1}{2}|\Pr[A(X_1)=1]-\Pr[A(X_2)=1]| 
-\leq \Delta(X_1, X_2).
 \end{aligned}$$
-Hence for either $0\in S$ or $1\in S$, we have
-$$\Pr[A(X_1)\in S]-\Pr[A(X_2)\in S] \leq 2 \Delta(X_1, X_2).$$
+We know that applying any randomized algorithm $A$ on the distributions $X_1$ and $X_2$ cannot increase their statistical distance $\Delta(X_1, X_2)$, i.e., 
+$$\Delta(A(X_1), A(X_2)) \leq \Delta(X_1, X_2).$$ 
 Note that we have found an upper bound for $\Delta(X_1, X_2)$. Thus we have bounded the advantage to distinguish these two queries for \emph{any} adversary. Now the remaining question is to see whether the value of the upper bound is small enough.
 
 Fig. \ref{fig:diff_factors} gives some upper bounds under different settings of $\nu$ and $d$. Note that if the similarity distance $d$ are small, the achieved upper bound of distinguishing advantage is close to zero, implying any attacker cannot well detect the relations between queries. Thus by setting appropriate $\nu$, it is possible to guarantee that the advantage of \emph{any} attacker must be upper bounded if the similarity distance between two requests is within $d$. For two queries with too large similarity distance between them, it is clearly impossible to hide their difference for privacy preserving in our scheme, since otherwise the utility of ranked search cannot be satisfied.
@@ -202,7 +208,7 @@ Hence we have established an upper bound of how much degree of privacy our schem
 
 \begin{figure}
 \centering
-\includegraphics[width=0.45\textwidth]{stdev1samples.eps}
+\includegraphics[width=0.8\linewidth]{stdev1samples.eps}
 \caption{The upper bounds of statistical distance $\Delta(X, Y)$. Here $\nu$ is the standard deviation of noise, and $d$ is the similarity distance between two search requests of $X$ and $Y$.}
 \label{fig:diff_factors}
 \end{figure}
