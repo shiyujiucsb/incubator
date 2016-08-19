@@ -17,7 +17,7 @@
 
 \begin{document}
 
-\title{\Large\bf Privacy Preservation on Ranked Soft Similarity Search over Encrypted Cloud Data}
+\title{\Large\bf Privacy Preserving Ranked Soft Similarity Search over Encrypted Cloud Data}
 \author{Shiyu Ji\\ shiyu@cs.ucsb.edu}
 \date{}
 \maketitle
@@ -83,15 +83,17 @@ We want to design an efficient and secure ranked search scheme over encrypted cl
 \item $V[i]$ \---- The $i$-th component of the vector $V$. For example, if $V = (0,1,2)^T$, then $V[1] = 0$, $V[2] = 1$ and $V[3] = 2$.
 \end{itemize}
 
-\emph{Cosine similarity} is a popular measure in information retrieval community to evaluate the similarity between two vectors in vector space model \cite{Sun13,ATY13,TAJY14}. Given a set of vectors $v_i = (v_{i,1}, v_{i,2}, \cdots, v_{i,m})^T$ where each vector is normalized to a unit length, and has at most $m$ features (if $v_i$ does not have feature $k$, we can set $v_{i,k}$ to be zero), the cosine similarity between vectors is defined as follows:
+\emph{Cosine Similarity} \cite{Sun13, ATY13, TAJY14, Xia16} is a popular measure in information retrieval community to evaluate the similarity between two vectors in vector space model \cite{Sun13,ATY13,TAJY14}. Given a set of vectors $v_i = (v_{i,1}, v_{i,2}, \cdots, v_{i,m})^T$ where each vector is normalized to a unit length, and has at most $m$ features (if $v_i$ does not have feature $k$, we can set $v_{i,k}$ to be zero), the cosine similarity between vectors is defined as follows:
 $$Sim(v_i,v_j) = \sum_{k=1}^m v_{i,k}\cdot v_{j,k}.$$
 Note that the cosine similarity of two vectors equals to their dot product. We say two vectors are similar if their cosine similarity exceeds some threshold $\tau$. For a ranked search over the documents $\mathbf{F}$, given the query vector $q$, we want the cloud server to return the top $k$ documents $\{\hat{f}_i\}$ with the highest cosine similarities $Sim(\hat{f}_i, q)$. In post-processing, the search user can decrypt the returned $k$ documents and check whether among them there are some similar ones, i.e., with similarities larger than the threshold $\tau$.
 
-\emph{Soft cosine similarity} is a generalized version of cosine similarity. The major difference is that for soft similarity, we assume there can be similarity between features. For example, in medical patient profiles, age and height are two different features, but their values often share some similarities: adults usually have more heights than young people. However, age and gender are two features that are almost orthogonal. With the above observation, we can use a real number $s_{ij}$ between 0 and 1 to represent the similarity between the features $i$ and $j$. Considering all the combinations, we have a $m \times m$ matrix $S$ called similarity matrix, where $m$ is the number of features, and each entry $s_{ij}$ of $S$ is the similarity between features. The soft cosine similarity between the vectors $u$ and $v$ is defined as follows:
-$$SoftSim(u, v) = \frac{\sum_{i,j}s_{ij}u_i v_j}{(\sum_{i,j}s_{ij}u_i u_j)(\sum_{i,j}s_{ij}v_i v_j)}.$$
-If the similarity matrix $S$ is a unit matrix, then the soft cosine similarity is the same as the classical cosine similarity.
+\emph{Soft Cosine Similarity} \cite{Soft14} is a generalized version of cosine similarity. The major difference is that for soft similarity, we assume there can be similarity between features. For example, in medical patient profiles, age and height are two different features, but their values often share some similarities: adults usually have more heights than young people. However, age and gender are two features that are almost orthogonal. With the above observation, we can use a real number $s_{ij}$ between 0 and 1 to represent the similarity between the features $i$ and $j$. Considering all the combinations, we have a $m \times m$ matrix $\mathbf{S}$ called similarity matrix, where $m$ is the number of features, and each entry $s_{ij}$ of $\mathbf{S}$ is the similarity between features. The soft cosine similarity between the vectors $u$ and $v$ is defined as follows:
+\begin{equation}\label{eqn:soft}
+SoftSim(u, v) = \frac{\sum_{i,j}s_{ij}u_i v_j}{\sqrt{\sum_{i,j}s_{ij}u_i u_j} \sqrt{\sum_{i,j}s_{ij}v_i v_j}}.\end{equation}
+Usually we assume $s_{ii} = 1$ along the diagonal of $\mathbf{S}$. 
+If the similarity matrix $\mathbf{S}$ is a unit matrix, then the soft cosine similarity is the same as the classical cosine similarity.
 
-\emph{Similarity distance} between two normalized vectors $X$ and $Y$ is defined as the minimum value $d$ such that 
+\emph{Similarity Distance} between two normalized vectors $X$ and $Y$ is defined as the minimum value $d$ such that 
 $$|Sim(X, q) - Sim(Y, q)|<d$$ 
 for any normalized vector $q$. Here we can choose (soft) cosine similarity. For other similarity measure, a distance concept can be similarly established.
 
@@ -148,6 +150,7 @@ Note that only $r$ and $t$ are not enough to preserve privacy, since they can be
 Thus we need to introduce more randomness to better preserve privacy, e.g, the similarity, the query unlinkability, etc.
 
 \subsection{Improved Scheme}
+\label{sec:imprv}
 We observe that the above scheme is not secure since all the ``safeguard'' random numbers are associated with the query side, but none of them is chosen by the index side. Hence the basic idea of our improved scheme is to introduce more randomness during the encryption of index entries.
 
 \begin{itemize}
@@ -159,15 +162,16 @@ After all the entries have been encrypted, we divide the entries into partitions
 \item \textbf{Search}($Q$, $k$, $\mathbf{C}$): the cloud server securely searches over the encrypted index of each partition, and determines the top $k$ documents $\hat{F}$ with the highest values of $D_i\cdot Q$. At last the server returns the documents $\hat{F}$ to the user.
 \end{itemize}
 It is not difficult to see now the cloud server can compute the value as follows:
-$$\begin{aligned}
+\begin{equation}\label{eqn:correct}
+\begin{aligned}
 &(M_1D_i', M_2D_i'')\cdot(M_1^{-1}Q', M_2^{-1}Q'') \\
 =&D_i'\cdot Q' + D_i''\cdot Q''\\
 =&D_i \cdot Q = (I_i,\varepsilon_i,1)\cdot (rq,r,r\sigma)\\
 =&r(I_i\cdot q+\varepsilon_i+\sigma).
-\end{aligned}$$
+\end{aligned}\end{equation}
 Clearly if the bound of $\varepsilon_i+\sigma$ is small enough, the value above can be used to rank the similarities, since it is proportional to $Sim(I_i, q)$. However, we will use $\varepsilon_i$ and $\sigma$ to preserve the privacy of similarity and query unlinkability. 
 
-\section{Security Analysis}
+\section{Privacy Analysis}
 In this section we assume the attacker has more knowledge than only ciphertext. In particular, we assume the attacker has a precise estimation of $r$ and $t$ as above, and we also assume the attacker has information of keyword frequency distribution based on historic experience. We make such an assumption since we have no way to consider all the strategies the attacker could possibly take. If our scheme can achieve security up to a higher standard, we can make sure it is also secure in the real world. We can show that our scheme can achieve privacy under certain settings by using well known computation-theoretical arguments.
 
 \subsection{Similarity and Keyword Privacy}
@@ -212,6 +216,62 @@ Hence we have established an upper bound of how much degree of privacy our schem
 \caption{The upper bounds of statistical distance $\Delta(X, Y)$. Here $\nu$ is the standard deviation of noise, and $d$ is the similarity distance between two search requests of $X$ and $Y$.}
 \label{fig:diff_factors}
 \end{figure}
+
+\section{Secure Ranked Soft Similarity Search}
+In this section we propose another secure search scheme that is based on soft cosine similarity. The major challenge is that each user can have a different belief in the similarities between features. Thus each user may submit queries based on different similarity matrices. However the cloud server has only one encryption version of the index entries, but the search scheme still has to satisfy all the queries from different similarity matrices. Our solution idea is to compute the bounds of dot product between two encrypted vectors. Then based on the computation, we let the cloud server return a little more than $k$ documents to the user, and we shall make sure the user can find the most similar $k$ documents among the returned ones, no matter which similarity matrix this user chooses.
+
+\subsection{Our Scheme for Soft Cosine Similiarity}
+Usually the similarities between different features are quite less than 1 \cite{Soft14}. For example, if the similarity is defined as $s_{ij} = 1/(1+|j-i|)$ (Eq. (27) in \cite{Soft14}), then $s_{ij}\leq 0.5$ for any $i \not= j$.
+Thus we introduce a bound parameter $\epsilon$ to represent the maximum off-diagonal entry in the similarity matrix.
+Without exceeding the bound $\epsilon$, each search user can have the freedom to choose different similarity matrices, e.g., for experimental use or for different beliefs.
+
+Our new scheme is given as follows:
+\begin{itemize}
+\item \textbf{Setup}($1^\lambda$): the data owner takes a security parameter $\lambda$ as input and generates a private key $sk$, which consists of a random $(m+2)$-bit string $S$ and two random $(m+2)\times (m+2)$ invertible matrices $M_1$ and $M_2$. Similarly, $m$ should be proportional to $\lambda$.
+\item \textbf{BuildIndex}($\mathbf{F}$, $sk$): each $m$-dimensional entry $I_i$ associated with $f_i$ is first extended to a $(m+2)$-dimensional vector $D_i$. Note that $D_i[m+1]$ is set to a random number $\varepsilon_i$ and $D_i[m+2]=1$. Then based on $S$, $D_i$ is split into $D_i'$ and $D_i''$. The splitting procedure based on $S$ in $sk$ has been described above. 
+
+After all the entries have been encrypted, we divide the entries into partitions, and for each partition, we build an index tree by using MD algorithm. All the interior nodes in the index tree are also encrypted using $sk$.
+\item \textbf{Query}($\mathbf{W}$, $sk$, $r$): the authorized user computes the query normalized vector $q$ based on the keywords and terms in the search request $r$, and sends $Q'$, $Q''$ (the encryption of $q$) to the cloud server. The encryption procedure of $q$ is similar as Section \ref{sec:imprv}, except that there is an additional step at the beginning: we calculate 
+$$\mathbf{q} = \mathbf{S}q/\sqrt{q^T\mathbf{S}q},$$ 
+where $\mathbf{S}$ is the similarity matrix chosen by the user, and then encrypt the vector $\mathbf{q}$ as what we did for $q$ in Section \ref{sec:imprv}.
+\item \textbf{Search}($Q$, $k$, $\mathbf{C}$): the cloud server securely searches over the encrypted index of each partition. 
+For each index entry $D_i$, it will compute two values: 1) an upper bound 
+$$U_i = D_i\cdot Q,$$ 
+and 2) a lower bound 
+$$L_i = U_i / \sqrt{1+(n-1)\epsilon}.$$
+Then the server will sort all the $L_i$ in descending order, and find the $k$-th largest $L_i$ (denoted by $\hat{L}_k$), and then include every document, whose index entry $D_i$ satisfies $U_i > \hat{L}_k$, into the set $\hat{F}$. 
+Finally the server returns the documents $\hat{F}$ to the user.
+\end{itemize}
+
+\subsection{Correctness}
+We argue that if privacy preservation is not required (i.e., $\varepsilon_i = \sigma = 0$), in our scheme the cloud server always returns a set including the $k$ documents which are the most similar to the query based on the similarity matrix $S$ chosen by the user.
+
+Clearly it suffices to show that for each document $f_i$ in $\hat{F}$, its soft cosine similarity is between $U_i/r$ and $L_i/r$, where $r$ is the random scaling factor chosen by the user when encrypting the query. If this holds, then $\hat{F}$ must contain the $k$ documents with the highest $L_i$'s (called the $k$ leading ones), and all the documents whose similarities can be possibly larger than any of the $k$ leading documents. This ensures the completeness of top $k$ similar documents among $\hat{F}$.
+
+For any document $f_i$ in the returned $\hat{F}$, the user first decrypts it and obtain the index entry $I$, which is a normalized vector, and then computes the scaling factor in the denominator of Eq. (\ref{eqn:soft}):
+$$\begin{aligned}
+&I^T \mathbf{S} I = \sum_{i,j} s_{ij} I[i]I[j] 
+=\sum_i I[i] \sum_j s_{ij} I[j] \\
+\leq & \sum_i I[i] \left( (1-\epsilon)I[i] + \sum_j \epsilon I[j] \right) \\
+\leq & \sum_i I[i] \left( (1-\epsilon)I[i] + \epsilon \sqrt{n} \right) \\
+=& \sum_i (1-\epsilon)I[i]^2 + \epsilon \sqrt{n} \sum_i I[i] \\
+\leq& 1+(n-1)\epsilon.
+\end{aligned}$$
+If $\varepsilon_i = \sigma = 0$, similarly to Eq. (\ref{eqn:correct}), the cloud server can compute 
+$$\begin{aligned}
+&U_i = (M_1D_i', M_2D_i'')\cdot(M_1^{-1}Q', M_2^{-1}Q'') \\
+=&rI\cdot \mathbf{q} = \frac{rI^T\mathbf{S}q}{q^T\mathbf{S}q} 
+=r\frac{\sum_{i,j}s_{ij}I_iq_j}{\sqrt{\sum_{i,j}s_{ij}q_iq_j}}\\
+=&\sqrt{I^T \mathbf{S} I}\cdot r\cdot SoftSim(I,q)\\
+\geq& r\cdot SoftSim(I,q).
+\end{aligned}$$
+Thus the lower bound satisfies
+$$L_i = U_i/\sqrt{1+(n-1)\epsilon} \leq r\cdot SoftSim(I,q).$$
+Hence we have the bounds as
+$$L_i \leq r\cdot SoftSim(I,q)\leq U_i.$$
+
+\subsection{Discussions on Privacy}
+Clearly if we introduce some normal random variables such as $\varepsilon_i$ and $\sigma$, then the cloud server is difficult to tell the link between two queries from the same request: the two bounds $U_i$ and $L_i$ may be perturbed each time so that the queries become indistinguishable if their requests are close enough. Similarly as before, with non-zero random variables, our scheme can prevent more privacy leakage, but the accuracy of the results may be decreased. Thus it is important to evaluate the decrease in accuracy while using randomness.
 
 \bibliographystyle{./IEEEtran}
 \bibliography{./sim_privacy}
