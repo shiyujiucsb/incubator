@@ -248,7 +248,7 @@ We argue that if privacy preservation is not required (i.e., $\varepsilon_i = \s
 
 Clearly it suffices to show that for each document $f_i$ in $\hat{F}$, its soft cosine similarity is between $U_i/r$ and $L_i/r$, where $r$ is the random scaling factor chosen by the user when encrypting the query. If this holds, then $\hat{F}$ must contain the $k$ documents with the highest $L_i$'s (called the $k$ leading ones), and all the documents whose similarities can be possibly larger than any of the $k$ leading documents. This ensures the completeness of top $k$ similar documents among $\hat{F}$.
 
-For any document $f_i$ in the returned $\hat{F}$, the user first decrypts it and obtain the index entry $I$, which is a normalized vector, and then computes the scaling factor in the denominator of Eq. (\ref{eqn:soft}):
+For any document $f_i$ in the returned $\hat{F}$, the user first decrypts it and obtains the index entry $I$, which is a normalized vector, and then computes the scaling factor in the denominator of Eq. (\ref{eqn:soft}):
 $$\begin{aligned}
 &I^T \mathbf{S} I = \sum_{i,j} s_{ij} I[i]I[j] 
 =\sum_i I[i] \sum_j s_{ij} I[j] \\
