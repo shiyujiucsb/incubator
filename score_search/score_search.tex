@@ -1,6 +1,6 @@
 \documentclass{IEEEtran}
 
-\usepackage{graphicx}
+\usepackage{graphicx,tikz}
 %\usepackage{fullpage}
 \usepackage{amsthm}
 \usepackage{amssymb}
@@ -95,12 +95,12 @@ In this section we propose our secure ranked search scheme, assuming the data ow
 
 \newcommand{\Enc}{\textsf{Enc}}
 \subsection{The Basic Scheme}
-The data owner randomly samples the symmetric encryption keys $k, k'$ and chooses a pseudorandom function $f$. Let $\Enc$ denote the symmetric encryption and let $H(\cdot)$ be the collision resistant hash function. 
+The data owner randomly samples the symmetric encryption keys $k, k'$ (given a security parameter $\lambda$) and chooses a pseudorandom function $f$. Let $\Enc$ denote the symmetric encryption and let $H(\cdot)$ be the collision resistant hash function. 
 \begin{itemize}
 \item {\bf Setup}: Given the document tags $T$ and the keywords $W$, the data owner constructs the inverted index $I$. Denote by $F_{w_i}$ the documents containing $w_i$ and denote by $T_{w_i}$ the tags of documents $F_{w_i}$. The data owner computes the metric scores of the documents in $F_{w_i}$ and sort their tags $T_{w_i}$ in descending order. The index $I$ takes the keywords in $W$ as keys, and takes the sorted $T_{w_i}$ as the list of keyword $w_i$. 
 \item {\bf IndexBuild}: The data owner replaces each key $w_i$ in the inverted index $I$ by its hash value $H(w_i)$, and replaces its associated list $T_{w_i}$ by the encryption $\Enc(T_{w_i}||r)$ under the key $f_k(w_i)$ (the value of $f$ on input $w_i$ under the key $k$), where $||$ denotes concatenation, and $r$ is a random binary string that is used to hide the length information of $T_{w_i}$. Then the data owner outsources all the encrypted documents $\Enc_{k'}(F)$ and the encrypted inverted index $I$ to the cloud server. The encrypted documents should be stored into a blind storage from the cloud server.
-\item {\bf Retrieval}: Suppose the user would like to query the keyword $w_j$. With some help from the data owner, the user is able to compute $H(w_j)$ and $f_k(w_j)$. Then the user sends the tuple $(H(w_j), f_k(w_j))$ to the cloud server. Upon receiving the query, the server can locate the list by using $H(w_j)$ and decrypt the corresponding list $\Enc(T_{w_j}||r)$ by using $f_k(w_j)$. Then by restoring $T_{w_j}$ in the list, the server will return the first $k$ tags in $T_{w_j}$ to the user.
-\item {\bf OT}: Upon receiving the $k$ top tags, the user communicates with the blind storage of the cloud server and safely obtain the corresponding $k$ documents.
+\item {\bf Retrieval}: Suppose the user would like to query the keyword $w_j$. With some help from the data owner, the user is able to compute $H(w_j)$ and $f_k(w_j)$. Then the user sends the tuple $(H(w_j), f_k(w_j))$ to the cloud server. Upon receiving the query, the server can locate the list by using $H(w_j)$ and decrypt the corresponding list $\Enc(T_{w_j}||r)$ by using $f_k(w_j)$. Then by restoring $T_{w_j}$ in the list, the server will return the first $K$ tags in $T_{w_j}$ to the user.
+\item {\bf OT}: Upon receiving the $K$ top tags, the user communicates with the blind storage of the cloud server and safely obtains the corresponding $K$ documents.
 \end{itemize}
 
 \subsection{Discussions}
@@ -111,6 +111,37 @@ Also the basic scheme has to re-compute the metric scores and re-encrypt the cor
 
 \section{Delegating Secure Ranked Search Scheme}
 In this section we propose our improved scheme that allows the data owner to safely delegate the metric computation to the cloud server. Our scheme can also allow the data owner to dynamically insert and delete documents to the cloud server efficiently.
+
+\subsection{The Delegating Scheme}
+Same as before, the data owner randomly samples the symmetric encryption keys $k, k'$ and chooses a pseudorandom function $f$. The symmetric encryption $\Enc$ and the collision resistant hash function $H$ are also chosen. 
+\begin{itemize}
+\item {\bf Setup}: Given the document tags $T$ and the keywords $W$, the data owner constructs the inverted index $I$. Denote by $F_{w_i}$ the documents containing $w_i$ and denote by $T_{w_i}$ the tags of documents $F_{w_i}$. Differently from before, the data owner does not compute the metric scores. Instead, for each tag $\tau_{i,j}$ in $T_{w_i}$, the data owner constructs a data structure with the fields as follows:
+	\begin{enumerate}
+	\item Encryptions of \emph{Tags} $\Enc(\tau_{i,j})$ under the key $f_k(w_i)$.
+	\item Encryptions of \emph{Edges} $\Enc(e(\tau_{i,j}, \tau_{i,k}))$ under the key $f_k(w_i)$ if there is an edge from the document $f_{i,j}$ to another $f_{i,k}$ in the graph model. The edge in the graph model can be interpreted as citation, reference, etc.
+	\end{enumerate}
+	Also to hide the length information of $T_{w_i}$, the data owner can generate some random data structures (denoted by strings $r$). 
+	Thus the inverted list of $w_i$ is the collection of all the data structures defined above for each tag in $T_{w_i}$. We denote the list as $L_{w_i}$.
+\item {\bf IndexBuild}: The data owner replaces each key $w_i$ in the inverted index $I$ by its hash value $H(w_i)$, and associates the above $L_{w_i}$ as its associated list. Then the data owner outsources all the encrypted documents $\Enc_{k'}(F)$ and the encrypted inverted index $I$ to the cloud server. The encrypted documents should be stored into a blind storage from the cloud server.
+\item {\bf Retrieval}: Suppose the user would like to query the keyword $w_j$. With some help from the data owner, the user is able to compute $H(w_j)$ and $f_k(w_j)$. Then the user sends the tuple $(H(w_j), f_k(w_j))$ to the cloud server. Upon receiving the query, the server can locate the list by using $H(w_j)$ and decrypt the corresponding list $L_{w_j}$ by using $f_k(w_j)$. Then the cloud server will learn the structure of the subgraph, in which each vertex denotes a document containing the keyword $w_j$. The cloud server can now compute (or approximate) the metric scores on the vertices, and select the tags with the $K$ highest scores. Finally the server returns the top $K$ tags to the user.
+\item {\bf OT}: Upon receiving the $K$ top tags, the user communicates with the blind storage of the cloud server and safely obtains the corresponding $K$ documents.
+\end{itemize}
+
+Fig. \ref{fig:gl} gives a small example of our delegating scheme.
+
+\begin{figure}[!t]
+\centering
+\begin{tikzpicture}[scale=.9]
+\input{graph_list_tikz.tex}
+\end{tikzpicture}
+\caption{A small example of the delegating scheme. There are four documents $f_1$, $f_2$, $f_3$, $f_4$ (with tags $\tau_1$, $\tau_2$, $\tau_3$, $\tau_4$) and three keywords $\omega_1$, $\omega_2$, $\omega_3$. In the inverted list of $\omega_1$, there are three entries corresponding to the three documents which contain $\omega_1$. Among these three documents, there are three edges: from $\tau_1$ to both $\tau_2$ and $\tau_3$, and from $\tau_3$ to $\tau2$. Thus in the entry of $\Enc(\tau_1)$, we encrypt the edges $e_{12}$ and $e_{13}$; in the entry of $\Enc(\tau_3)$, we encrypt the edge $e_{32}$ (a random string is padded to hide the length information). The entry of $\Enc(\tau_2)$ encrypts no edge since $\tau_2$ has no out-edge among the three documents containing $\omega_1$. The entry of $\tau_2$ may be padded with some random strings for privacy. Clearly with $H(\omega_1)$ and $f_k(\omega_1)$, the cloud server can recover the subgraph of $\tau_1$, $\tau_2$ and $\tau_3$.}
+\label{fig:gl}
+\end{figure}
+
+\subsection{Discussions}
+One major improvement of the scheme above is that now the data owner does not need to compute the metric scores, which saves a lot of time in the Setup phase. The tremendous computation work is delegated to the cloud server, which usually has high computing speed and abundant hardware resource. Also the computation of metrics follows a \emph{lazy} pattern, i.e., they are computed only when needed. Since the distribution of queried keywords are usually highly biased, our improved scheme does not have to compute the metrics for all the documents or all the keywords in practice. Also it is clear that the improved scheme can be flexible to change network metric algorithms or policies, e.g., it is easy to change from PageRank to Betweenness Centrality.
+
+Another important improvement is that we better support dynamic document insertion and deletion. Since each data structure is encrypted independently, the data owner can update them without refreshing the entire list.
 
 \bibliographystyle{./IEEEtran}
 \bibliography{./score_search}
