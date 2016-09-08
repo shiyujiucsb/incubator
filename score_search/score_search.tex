@@ -33,7 +33,7 @@
 
 \section{Introduction}
 
-With the advance of cloud computing and information retrieval, secure search over encrypted cloud data has attracted extensive research interest \cite{WC12,Cao14,Sun13,WYL14,SLH14,SLL15,LLD15,WSL15,Xia16}. Most of the state-of-art research works focus on keyword relevance based search \cite{WC12,WYL14,LLD15,SLL15,WSL15}, or similarity based search \cite{Cao14,Sun13,SLH14,Xia16}. The measure of relevance or similarity is usually fixed, e.g., TF $\times$ IDF rule \cite{WC12} or cosine similarity \cite{Cao14,Xia16}, etc. It is still very open how to securely search over encrypted cloud data and rank the resulted documents based on different network metrics, e.g., PageRank \cite{PR99}, SimRank \cite{JW02}, Betweenness Centrality \cite{Bran01}, Jaccard Index \cite{Jac89}, etc. This paper attempts to give such a secure search framework supporting metric-based ranking.
+With the advance of cloud computing and information retrieval, secure search over encrypted cloud data has attracted extensive research interest \cite{WC12,Cao14,Sun13,WYL14,SLH14,SLL15,LLD15,WSL15,Xia16}. Most of the state-of-art research works focus on keyword relevance based search \cite{WC12,WYL14,LLD15,SLL15,WSL15}, or similarity based search \cite{Cao14,Sun13,SLH14,Xia16}. The measure of relevance or similarity is usually fixed, e.g., TF $\times$ IDF rule \cite{WC12} or cosine similarity \cite{Cao14,Xia16}, etc. It is still very open how to securely search over encrypted cloud data and rank the resulted documents based on various network metrics, e.g., PageRank \cite{PR99}, SimRank \cite{JW02}, Betweenness Centrality \cite{Bran01}, Jaccard Index \cite{Jac89}, etc. This paper attempts to give such a secure search framework supporting metric-based ranking.
 
 We summarize our major contributions as follows:
 \begin{enumerate}
@@ -65,7 +65,7 @@ We want to design an efficient and secure ranked search scheme over encrypted cl
 
 \textbf{Privacy preserving}. We want to prevent the cloud server from learning anything about the outsourced documents, the keywords queried by users, or document access pattern. We will investigate the cases as follows:
 \begin{itemize}
-\item \textbf{Document privacy}. The server should not learn any information about the outsourced documents.
+\item \textbf{Document privacy}. The server should not learn any information about the outsourced documents, e.g., which document was returned to the user.
 \item \textbf{Keyword privacy}. The server should not be able to know any information about the keywords in the search queries.
 \item \textbf{Oblivious document access}. The characteristic of document access pattern should not be learned by the cloud server. This can be achieved by using blind storage \cite{NPG14}.
 \end{itemize}
@@ -97,11 +97,20 @@ In this section we propose our secure ranked search scheme, assuming the data ow
 \subsection{The Basic Scheme}
 The data owner randomly samples the symmetric encryption keys $k, k'$ (given a security parameter $\lambda$) and chooses a pseudorandom function $f$. Let $\Enc$ denote the symmetric encryption and let $H(\cdot)$ be the collision resistant hash function. 
 \begin{itemize}
-\item {\bf Setup}: Given the document tags $T$ and the keywords $W$, the data owner constructs the inverted index $I$. Denote by $F_{w_i}$ the documents containing $w_i$ and denote by $T_{w_i}$ the tags of documents $F_{w_i}$. The data owner computes the metric scores of the documents in $F_{w_i}$ and sort their tags $T_{w_i}$ in descending order. The index $I$ takes the keywords in $W$ as keys, and takes the sorted $T_{w_i}$ as the list of keyword $w_i$. 
+\item {\bf Setup}: Given the document tags $T$ and the keywords $W$, the data owner constructs the inverted index $I$. Denote by $F_{w_i}$ the documents containing $w_i$ and denote by $T_{w_i}$ the tags of documents $F_{w_i}$. The data owner computes the metric scores of the documents in $F_{w_i}$ and sort their tags $T_{w_i}$ in descending order. The index $I$ takes the keywords in $W$ as keys, and takes the sorted $T_{w_i}$ as the posting list of keyword $w_i$. 
 \item {\bf IndexBuild}: The data owner replaces each key $w_i$ in the inverted index $I$ by its hash value $H(w_i)$, and replaces its associated list $T_{w_i}$ by the encryption $\Enc(T_{w_i}||r)$ under the key $f_k(w_i)$ (the value of $f$ on input $w_i$ under the key $k$), where $||$ denotes concatenation, and $r$ is a random binary string that is used to hide the length information of $T_{w_i}$. Then the data owner outsources all the encrypted documents $\Enc_{k'}(F)$ and the encrypted inverted index $I$ to the cloud server. The encrypted documents should be stored into a blind storage from the cloud server.
 \item {\bf Retrieval}: Suppose the user would like to query the keyword $w_j$. With some help from the data owner, the user is able to compute $H(w_j)$ and $f_k(w_j)$. Then the user sends the tuple $(H(w_j), f_k(w_j))$ to the cloud server. Upon receiving the query, the server can locate the list by using $H(w_j)$ and decrypt the corresponding list $\Enc(T_{w_j}||r)$ by using $f_k(w_j)$. Then by restoring $T_{w_j}$ in the list, the server will return the first $K$ tags in $T_{w_j}$ to the user.
 \item {\bf OT}: Upon receiving the $K$ top tags, the user communicates with the blind storage of the cloud server and safely obtains the corresponding $K$ documents.
 \end{itemize}
+
+\subsection{Security Analysis}
+\textbf{Confidentiality} of the documents and index entries (not yet queried) is guaranteed by symmetric encryption (e.g., 256-bit AES with CBC mode), which makes sure that it is computationally infeasible to distinguish its ciphertext from truly random strings.
+
+\textbf{Document privacy} is protected by the blind storage, which assures that the cloud server has no idea which encrypted document was returned to the user. 
+
+\textbf{Keyword privacy} is protected by the collision resistant hash function $H(\cdot)$ and the pseudorandom function $f$, i.e., given $H(w_i)$ and $f_k(w_i)$ (the adversary has no idea on the key $k$), it is computationally infeasible to find the keyword $w_i$.
+
+\textbf{Oblivious document access} is guaranteed by the blind storage scheme.
 
 \subsection{Discussions}
 One drawback of the basic scheme is that it requires the data owner to pre-compute the metric scores of all the documents, which may be quite time-consuming. A natural idea is to delegate the computation to the cloud server, and the scores should be computed \emph{only} when the lists are queried.
@@ -118,7 +127,7 @@ Same as before, the data owner randomly samples the symmetric encryption keys $k
 \item {\bf Setup}: Given the document tags $T$ and the keywords $W$, the data owner constructs the inverted index $I$. Denote by $F_{w_i}$ the documents containing $w_i$ and denote by $T_{w_i}$ the tags of documents $F_{w_i}$. Differently from before, the data owner does not compute the metric scores. Instead, for each tag $\tau_{i,j}$ in $T_{w_i}$, the data owner constructs a data structure with the fields as follows:
 	\begin{enumerate}
 	\item Encryptions of \emph{Tags} $\Enc(\tau_{i,j})$ under the key $f_k(w_i)$.
-	\item Encryptions of \emph{Edges} $\Enc(e(\tau_{i,j}, \tau_{i,k}))$ under the key $f_k(w_i)$ if there is an edge from the document $f_{i,j}$ to another $f_{i,k}$ in the graph model. The edge in the graph model can be interpreted as citation, reference, etc.
+	\item Encryptions of \emph{Edges} $\Enc(e(\tau_{i,j}, \tau_{i,k}))$ under the key $f_k(w_i)$ if among $F_{w_i}$ there is an edge from the document $f_{i,j}$ to another $f_{i,k}\in F_{w_i}$ based on the graph model. The edge in the graph model can be interpreted as citation, reference, etc.
 	\end{enumerate}
 	Also to hide the length information of $T_{w_i}$, the data owner can generate some random data structures (denoted by strings $r$). 
 	Thus the inverted list of $w_i$ is the collection of all the data structures defined above for each tag in $T_{w_i}$. We denote the list as $L_{w_i}$.
@@ -139,7 +148,7 @@ Fig. \ref{fig:gl} gives a small example of our delegating scheme.
 \end{figure}
 
 \subsection{Discussions}
-One major improvement of the scheme above is that now the data owner does not need to compute the metric scores, which saves a lot of time in the Setup phase. The tremendous computation work is delegated to the cloud server, which usually has high computing speed and abundant hardware resource. Also the computation of metrics follows a \emph{lazy} pattern, i.e., they are computed only when needed. Since the distribution of queried keywords are usually highly biased, our improved scheme does not have to compute the metrics for all the documents or all the keywords in practice. Also it is clear that the improved scheme can be flexible to change network metric algorithms or policies, e.g., it is easy to change from PageRank to Betweenness Centrality.
+One major improvement of the scheme above is that now the data owner does not need to compute the metric scores, which saves a lot of time in the Setup phase. The tremendous computation work is delegated to the cloud server, which usually has high computing speed and abundant hardware resource. Also the computation of metrics follows a \emph{lazy} pattern, i.e., they are computed only when needed. Since the distribution of queried keywords is usually highly biased, our improved scheme does not have to compute the metrics for all the documents or all the keywords in practice. Also it is clear that the improved scheme can be flexible to change network metric algorithms or policies, e.g., it is easy to change from PageRank to Betweenness Centrality.
 
 Another important improvement is that we better support dynamic document insertion and deletion. Since each data structure is encrypted independently, the data owner can update them without refreshing the entire list.
 
