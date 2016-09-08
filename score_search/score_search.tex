@@ -112,6 +112,8 @@ The data owner randomly samples the symmetric encryption keys $k, k'$ (given a s
 
 \textbf{Oblivious document access} is guaranteed by the blind storage scheme.
 
+Note that the tags in the posting list of $H(w_i)$ are revealed to the cloud server once $w_i$ is queried. Since in the blind storage scheme, tags are generated independently from the content of documents, exposing the tags will not negatively influence the document confidentiality or privacy. It is also possible to hide the tags from the cloud server: the user may send \emph{only} $H(w_i)$ to the server, and then the server returns the whole encrypted posting list of $H(w_i)$ to the user, and finally the user decrypts the list by using $f_k(w_i)$ and obliviously gets the top $K$ files from the blind storage. However, by doing this the communication overhead can be quite high: the server has to return the whole list, which contains much information that is irrelevant to top $K$ tags. Also since the user has to decrypt every time, the scheme will be less efficient.
+
 \subsection{Discussions}
 One drawback of the basic scheme is that it requires the data owner to pre-compute the metric scores of all the documents, which may be quite time-consuming. A natural idea is to delegate the computation to the cloud server, and the scores should be computed \emph{only} when the lists are queried.
 
@@ -146,6 +148,9 @@ Fig. \ref{fig:gl} gives a small example of our delegating scheme.
 \caption{A small example of the delegating scheme. There are four documents $f_1$, $f_2$, $f_3$, $f_4$ (with tags $\tau_1$, $\tau_2$, $\tau_3$, $\tau_4$) and three keywords $\omega_1$, $\omega_2$, $\omega_3$. In the inverted list of $\omega_1$, there are three entries corresponding to the three documents which contain $\omega_1$. Among these three documents, there are three edges: from $\tau_1$ to both $\tau_2$ and $\tau_3$, and from $\tau_3$ to $\tau2$. Thus in the entry of $\Enc(\tau_1)$, we encrypt the edges $e_{12}$ and $e_{13}$; in the entry of $\Enc(\tau_3)$, we encrypt the edge $e_{32}$ (a random string is padded to hide the length information). The entry of $\Enc(\tau_2)$ encrypts no edge since $\tau_2$ has no out-edge among the three documents containing $\omega_1$. The entry of $\tau_2$ may be padded with some random strings for privacy. Clearly with $H(\omega_1)$ and $f_k(\omega_1)$, the cloud server can recover the subgraph of $\tau_1$, $\tau_2$ and $\tau_3$.}
 \label{fig:gl}
 \end{figure}
+
+\subsection{Security Analysis}
+By a similar reasoning, document confidentiality and privacy, keyword privacy, oblivious document access pattern are all preserved by the scheme above. Since we want to delegate the metric score computation to the cloud server, we allow the server to know the subgraphs that were queried. The cloud server can maintain a cache to store the results. Then the server does not have to re-compute all the scores for each duplicated query.
 
 \subsection{Discussions}
 One major improvement of the scheme above is that now the data owner does not need to compute the metric scores, which saves a lot of time in the Setup phase. The tremendous computation work is delegated to the cloud server, which usually has high computing speed and abundant hardware resource. Also the computation of metrics follows a \emph{lazy} pattern, i.e., they are computed only when needed. Since the distribution of queried keywords is usually highly biased, our improved scheme does not have to compute the metrics for all the documents or all the keywords in practice. Also it is clear that the improved scheme can be flexible to change network metric algorithms or policies, e.g., it is easy to change from PageRank to Betweenness Centrality.

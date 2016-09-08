@@ -39,7 +39,13 @@
 \@writefile{toc}{\contentsline {section}{\numberline {III}Basic Secure Ranked Search Scheme}{2}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-A}}The Basic Scheme}{2}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-B}}Security Analysis}{2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-C}}Discussions}{2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {III-C}}Discussions}{3}}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Delegating Secure Ranked Search Scheme}{3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-A}}The Delegating Scheme}{3}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces A small example of the delegating scheme. There are four documents $f_1$, $f_2$, $f_3$, $f_4$ (with tags $\tau _1$, $\tau _2$, $\tau _3$, $\tau _4$) and three keywords $\omega _1$, $\omega _2$, $\omega _3$. In the inverted list of $\omega _1$, there are three entries corresponding to the three documents which contain $\omega _1$. Among these three documents, there are three edges: from $\tau _1$ to both $\tau _2$ and $\tau _3$, and from $\tau _3$ to $\tau 2$. Thus in the entry of $\textsf  {Enc}(\tau _1)$, we encrypt the edges $e_{12}$ and $e_{13}$; in the entry of $\textsf  {Enc}(\tau _3)$, we encrypt the edge $e_{32}$ (a random string is padded to hide the length information). The entry of $\textsf  {Enc}(\tau _2)$ encrypts no edge since $\tau _2$ has no out-edge among the three documents containing $\omega _1$. The entry of $\tau _2$ may be padded with some random strings for privacy. Clearly with $H(\omega _1)$ and $f_k(\omega _1)$, the cloud server can recover the subgraph of $\tau _1$, $\tau _2$ and $\tau _3$.}}{3}}
+\newlabel{fig:gl}{{2}{3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-B}}Security Analysis}{3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-C}}Discussions}{3}}
 \bibstyle{./IEEEtran}
 \bibdata{./score_search}
 \bibcite{WC12}{1}
@@ -47,12 +53,6 @@
 \bibcite{Sun13}{3}
 \bibcite{WYL14}{4}
 \bibcite{SLH14}{5}
-\@writefile{toc}{\contentsline {section}{\numberline {IV}Delegating Secure Ranked Search Scheme}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-A}}The Delegating Scheme}{3}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces A small example of the delegating scheme. There are four documents $f_1$, $f_2$, $f_3$, $f_4$ (with tags $\tau _1$, $\tau _2$, $\tau _3$, $\tau _4$) and three keywords $\omega _1$, $\omega _2$, $\omega _3$. In the inverted list of $\omega _1$, there are three entries corresponding to the three documents which contain $\omega _1$. Among these three documents, there are three edges: from $\tau _1$ to both $\tau _2$ and $\tau _3$, and from $\tau _3$ to $\tau 2$. Thus in the entry of $\textsf  {Enc}(\tau _1)$, we encrypt the edges $e_{12}$ and $e_{13}$; in the entry of $\textsf  {Enc}(\tau _3)$, we encrypt the edge $e_{32}$ (a random string is padded to hide the length information). The entry of $\textsf  {Enc}(\tau _2)$ encrypts no edge since $\tau _2$ has no out-edge among the three documents containing $\omega _1$. The entry of $\tau _2$ may be padded with some random strings for privacy. Clearly with $H(\omega _1)$ and $f_k(\omega _1)$, the cloud server can recover the subgraph of $\tau _1$, $\tau _2$ and $\tau _3$.}}{3}}
-\newlabel{fig:gl}{{2}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\unhbox \voidb@x \hbox {IV-B}}Discussions}{3}}
-\@writefile{toc}{\contentsline {section}{References}{3}}
 \bibcite{SLL15}{6}
 \bibcite{LLD15}{7}
 \bibcite{WSL15}{8}
@@ -64,3 +64,4 @@
 \bibcite{NPG14}{14}
 \bibcite{TAOCPv1}{15}
 \bibcite{NM10}{16}
+\@writefile{toc}{\contentsline {section}{References}{4}}
