@@ -138,7 +138,7 @@ Same as before, the data owner randomly samples the symmetric encryption keys $k
 \item {\bf OT}: Upon receiving the $K$ top tags, the user communicates with the blind storage of the cloud server and safely obtains the corresponding $K$ documents.
 \end{itemize}
 
-Fig. \ref{fig:gl} gives a small example of our delegating scheme.
+Fig. \ref{fig:gl} gives a small example of our delegating scheme. Given any keyword, the cloud server can recover the subgraph, in which each node is associated with the given keyword. Then the server can compute the appropriate metric scores (e.g., PageRank, SimRank, Centrality, etc.) over the extracted subgraph, and return the top $K$ tags based on the resulted scores. For example, on keyword $\omega_1$, the server recovers the structure of the subgraph with nodes $\tau_1$, $\tau_2$ and $\tau_3$. If the user is interested in the node containing $\omega_1$ with the highest PageRank, then the cloud server will return $\tau_2$, which is the most cited node in the PageRank sense.
 
 \begin{figure}[!t]
 \centering
@@ -150,7 +150,7 @@ Fig. \ref{fig:gl} gives a small example of our delegating scheme.
 \end{figure}
 
 \subsection{Security Analysis}
-By a similar reasoning, document confidentiality and privacy, keyword privacy, oblivious document access pattern are all preserved by the scheme above. Since we want to delegate the metric score computation to the cloud server, we allow the server to know the subgraphs that were queried. The cloud server can maintain a cache to store the results. Then the server does not have to re-compute all the scores for each duplicated query.
+By a similar reasoning, document confidentiality and privacy, keyword privacy, oblivious document access pattern are all preserved by the scheme above. Since we want to delegate the metric score computation to the cloud server, we allow the server to know the subgraphs that were queried. The cloud server can maintain a cache to store the results. Then the server does not have to re-compute all the scores for each duplicated query. Even though the server knows the subgraph structure upon query, the global network structure is still hidden. It is rare all keywords will be queried since in practice there is a significantly biased distribution on searched keywords. Moreover, since all the documents in the blind storage are encrypted by symmetric encryption, the server cannot infer the correspondence between the tags and the documents in plaintext.
 
 \subsection{Discussions}
 One major improvement of the scheme above is that now the data owner does not need to compute the metric scores, which saves a lot of time in the Setup phase. The tremendous computation work is delegated to the cloud server, which usually has high computing speed and abundant hardware resource. Also the computation of metrics follows a \emph{lazy} pattern, i.e., they are computed only when needed. Since the distribution of queried keywords is usually highly biased, our improved scheme does not have to compute the metrics for all the documents or all the keywords in practice. Also it is clear that the improved scheme can be flexible to change network metric algorithms or policies, e.g., it is easy to change from PageRank to Betweenness Centrality.
