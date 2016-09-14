@@ -1,0 +1,113 @@
+\begin{thebibliography}{10}
+
+\bibitem{ATY13}
+Maha Alabduljalil, Xun Tang, and Tao Yang.
+\newblock Cache-conscious performance optimization for similarity search.
+\newblock In {\em Proceedings of the 36th international ACM SIGIR conference on
+  Research and development in information retrieval}, pages 713--722. ACM,
+  2013.
+
+\bibitem{AGO14}
+Davide Anguita, Alessandro Ghio, Luca Oneto, and Sandro Ridella.
+\newblock A deep connection between the vapnik--chervonenkis entropy and the
+  rademacher complexity.
+\newblock {\em IEEE transactions on neural networks and learning systems},
+  25(12):2202--2211, 2014.
+
+\bibitem{BBM05}
+Peter~L Bartlett, Olivier Bousquet, and Shahar Mendelson.
+\newblock Local rademacher complexities.
+\newblock {\em Annals of Statistics}, pages 1497--1537, 2005.
+
+\bibitem{BM02}
+Peter~L Bartlett and Shahar Mendelson.
+\newblock Rademacher and gaussian complexities: Risk bounds and structural
+  results.
+\newblock {\em Journal of Machine Learning Research}, 3(Nov):463--482, 2002.
+
+\bibitem{BMS07}
+Roberto~J Bayardo, Yiming Ma, and Ramakrishnan Srikant.
+\newblock Scaling up all pairs similarity search.
+\newblock In {\em Proceedings of the 16th international conference on World
+  Wide Web}, pages 131--140. ACM, 2007.
+
+\bibitem{BLM99}
+S~Boucheron, G~Lugosi, and Pascal Massart.
+\newblock A sharp concentration inequality with applications.
+\newblock {\em Random Structures and Algorithms}, 1999.
+
+\bibitem{Char02}
+Moses~S Charikar.
+\newblock Similarity estimation techniques from rounding algorithms.
+\newblock In {\em Proceedings of the thiry-fourth annual ACM symposium on
+  Theory of computing}, pages 380--388. ACM, 2002.
+
+\bibitem{FKS03}
+Ronald Fagin, Ravi Kumar, and Dandapani Sivakumar.
+\newblock Efficient similarity search and classification via rank aggregation.
+\newblock In {\em Proceedings of the 2003 ACM SIGMOD international conference
+  on Management of data}, pages 301--312. ACM, 2003.
+
+\bibitem{GIM99}
+Aristides Gionis, Piotr Indyk, Rajeev Motwani, et~al.
+\newblock Similarity search in high dimensions via hashing.
+\newblock {\em VLDB}, 99(6):518--529, 1999.
+
+\bibitem{H63}
+Wassily Hoeffding.
+\newblock Probability inequalities for sums of bounded random variables.
+\newblock {\em Journal of the American statistical association},
+  58(301):13--30, 1963.
+
+\bibitem{IM98}
+Piotr Indyk and Rajeev Motwani.
+\newblock Approximate nearest neighbors: towards removing the curse of
+  dimensionality.
+\newblock In {\em Proceedings of the thirtieth annual ACM symposium on Theory
+  of computing}, pages 604--613. ACM, 1998.
+
+\bibitem{Lin09}
+Jimmy Lin.
+\newblock Brute force and indexed approaches to pairwise document similarity
+  comparisons with mapreduce.
+\newblock In {\em Proceedings of the 32nd international ACM SIGIR conference on
+  Research and development in information retrieval}, pages 155--162. ACM,
+  2009.
+
+\bibitem{M89}
+Colin McDiarmid.
+\newblock On the method of bounded differences.
+\newblock {\em Surveys in combinatorics}, 141(1):148--188, 1989.
+
+\bibitem{Mohri09}
+Mehryar Mohri and Afshin Rostamizadeh.
+\newblock Rademacher complexity bounds for non-iid processes.
+\newblock In {\em Advances in Neural Information Processing Systems}, pages
+  1097--1104, 2009.
+
+\bibitem{Oneto13}
+Luca Oneto, Alessandro Ghio, Davide Anguita, and Sandro Ridella.
+\newblock An improved analysis of the rademacher data-dependent bound using its
+  self bounding property.
+\newblock {\em Neural Networks}, 44:107--111, 2013.
+
+\bibitem{SGM00}
+Alexander Strehl, Joydeep Ghosh, and Raymond Mooney.
+\newblock Impact of similarity measures on web-page clustering.
+\newblock In {\em Workshop on Artificial Intelligence for Web Search (AAAI
+  2000)}, pages 58--64, 2000.
+
+\bibitem{TAJY14}
+Xun Tang, Maha Alabduljalil, Xin Jin, and Tao Yang.
+\newblock Load balancing for partition-based similarity search.
+\newblock In {\em Proceedings of the 37th international ACM SIGIR conference on
+  Research \& development in information retrieval}, pages 193--202. ACM, 2014.
+
+\bibitem{Xia16}
+Zhihua Xia, Xinhui Wang, Xingming Sun, and Qian Wang.
+\newblock A secure and dynamic multi-keyword ranked search scheme over
+  encrypted cloud data.
+\newblock {\em IEEE Transactions on Parallel and Distributed Systems},
+  27(2):340--352, 2016.
+
+\end{thebibliography}

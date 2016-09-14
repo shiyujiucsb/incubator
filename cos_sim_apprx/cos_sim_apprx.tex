@@ -1,0 +1,91 @@
+\documentclass{article}
+
+\usepackage{graphicx,tikz}
+\usepackage{fullpage}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+%\usepackage{algorithm}
+%\usepackage{algorithmicx}
+%\usepackage{algpseudocode}
+%\usepackage{booktabs}
+%\usepackage{color}
+
+%\renewcommand{\baselinestretch}{0.95}
+%\setlength{\textfloatsep}{0.1cm}
+%\setlength{\abovecaptionskip}{0.1cm}
+
+\begin{document}
+
+\title{\Large\bf Approximating All-Pairs Similarity Search by Rademacher Average}
+\author{Shiyu Ji\\ shiyu@cs.ucsb.edu}
+\date{}
+\maketitle
+
+\newtheorem{definition}{Definition}
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{plain}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{plain}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{plain}
+
+\section{Introduction}
+All-pairs similarity search (APSS) has received extensive research interest recently \cite{BMS07,Xia16,ATY13,TAJY14}. To improve performance, many approximation approaches have been proposed \cite{GIM99,FKS03,IM98,Char02}. This paper considers an approximation method for cosine similarity based search, which is one of the most popular APSS solutions \cite{SGM00,Xia16,ATY13,TAJY14}. The approximation error of our algorithm is upper bounded by using Rademacher average \cite{BM02,Mohri09,BBM05}.
+
+\section{Problem Formulation and Preliminaries}
+\subsection{Cosine Similarity}
+We consider the cosine similarity based all-pairs similarity search.
+Suppose there are $n$ vectors (each vector can represent a user profile or a web page). Each vector contains $m$ non-negative features. Define the cosine similarity between two vectors $u$ and $v$ as
+$$Sim(u,v) = \frac{1}{||u||\cdot||v||} \sum_{i=1}^m u_i\cdot v_i,$$
+where $u_i$, $v_i$ denotes the $i$-th feature value of $u$, $v$.
+For simplicity, we assume all the vectors are adjusted with the same norm: $||v|| = \sqrt{m}$ for every $v$ in the $n$ vectors. Then the equation above can be simplified as
+$$Sim(u,v) = \frac{1}{m} \sum_{i=1}^m u_i\cdot v_i.$$
+That is, the similarity is defined as the average on the corresponding feature products between the vectors. 
+
+To do the all-pairs similarity search (APSS), we need to compute the similarity between each pair of vectors. Since there are $n(n-1)$ pairs, and for each pair we need $m$ times of multiplication, the total complexity of a naiive algorithm is $O(n^2 m)$. Fortunately, there are many methods to detect dissimilar pairs (two vectors without sharing any feature) \cite{ATY13,TAJY14,Lin09}, which can save a lot of computation. For the state-of-art works, to compute all the pairs, the complexity can be lowered to $O(nkm)$, where $k$ is much less than $n$. However, to the best of our knowledge, there were few discussions on the size of features $m$. If we can only consider a part of the $m$ features without significantly deteriorating the accuracy, then the total computation time for APSS can be lowered significantly (note that $nk$ is still large for very big dataset). We can approximating the similarity by sampling on the features.
+
+\subsection{Rademacher Average}
+This section proposes our approximation algorithm and its analysis.
+Suppose we want to compute the cosine similarities between a fixed vector $u$ and other vectors $v_1$, $v_2$, $\cdots$, $v_n$. We take the $m$ features as the sample space $S$:
+$$S = \{s_1, \cdots, s_k\} \subseteq D$$
+where $k$ is the number of samples we take, and $D$ is the feature space: $D = \{1,2,\cdots,m\}$.
+Let $F$ be a collection of functions from the features $D$ to the interval $[0, m]$.
+For each function $f\in F$, define the \emph{true average} $A_D(f)$ and \emph{sampled average} $A_S(f)$ as follows:
+$$A_D(f) = \frac{1}{m} \sum_{i=1}^m f(i),\quad A_S(f) = \frac{1}{k} \sum_{i=1}^k f(s_i).$$
+Define the \emph{uniform deviation} \cite{Oneto13} of $F$ given $S$ as
+$$U_S(F) = \sup_{f\in F} [ A_S(f) - A_D(f) ].$$
+Note that if $F$ is a finite set (in this paper we will see this is true), supreme can be replaced by maximum:
+$$U_S(F) = \max_{f\in F} [ A_S(f) - A_D(f) ].$$
+Define the \emph{Rademacher average} \cite{Mohri09,BM02,Oneto13} of $F$ given $S$ as
+\newcommand{\E}{\mathbb{E}}
+$$R_S(F) = \E_\sigma \left[\sup_{f\in F} \frac{2}{k}\sum_{i=1}^k \sigma_i f(s_i) \right],$$
+where each $\sigma_i$ is a random variable uniformly distributed over $\{-1, 1\}$, and the mean $\E_\sigma$ takes randomness over all the $\sigma_i$'s conditionally on $S$. Again, one can replace supreme by maximum.
+
+The main motivation of our algorithm is that the difference between true average and sampled average is upper bounded by the Rademacher average as follows.
+We leave the proofs to the Appendix.
+
+\begin{theorem}
+\label{thm:main}
+With probability at least $1-\delta$, we have
+$$\sup_{f\in F}|A_S(f) - A_D(f)| \leq R_S(F) + \left(m+m\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{2}{\delta} + R_S(F)}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}.$$
+\end{theorem}
+
+The remaining item we need to upper bound is $R_S(F)$. Our result is similar to Massart's lemma \cite{AGO14}.
+
+\begin{theorem}
+\label{thm2}
+$$R_S(F) \leq \frac{\ell}{k}\sqrt{8\log |F|},$$
+where $\ell^2 = \sup_{f\in F}\sum_{i=1}^k f(s_i)^2$.
+\end{theorem}
+
+By the above two theorems, we can bound our approximation error even for the worst case.
+
+%\bibliographystyle{./IEEEtran}
+\bibliographystyle{plain}
+\bibliography{./cos}
+
+\section{Appendix}
+\input{appendix.tex}
+\end{document}

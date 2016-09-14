@@ -1,0 +1,159 @@
+\section{Proof of Theorem \ref{thm:main}}
+In this section, we show our main result (Theorem \ref{thm:main}).
+We start from the definition of self bounding function \cite{Oneto13}.
+\begin{definition}
+Let $s_1$, $s_2$, $\cdots$, $s_k$ be independent random variables taking values from a set $D$. A function $f: D^k \to [0, +\infty]$ is a self bounding function if there exists a constant $c$ and a function $g: D^{k-1}\to \mathbb{R}$ such that for any $s_1$, $\cdots$, $s_{j-1}$, $s_{j+1}$, $\cdots$, $s_k \in D$, the following conditions hold:
+$$0 \leq f(s_1, \cdots, s_k) - g(s_1,\cdots, s_{j-1}, s_{j+1}, \cdots, s_k) \leq c,$$
+$$\sum_{j=1}^k [f(s_1, \cdots, s_k) - g(s_1,\cdots, s_{j-1}, s_{j+1}, \cdots, s_k)] \leq f(s_1, \cdots, s_k).$$
+\end{definition}
+
+The following concentration inequality can be achieved for self bounding functions \cite{BLM99}.
+
+\begin{lemma}
+\cite{BLM99} If a function $Z = f(s_1,\cdots,s_k)$ is a self bounding function with constant $c$, then for $t \leq \E Z$,
+$$\Pr[\E Z - Z \geq t] \leq \exp\left(-\frac{t^2}{2c\E Z}\right).$$
+For $t > \E Z$, the left probability is zero trivially.
+Here we take randomness over $s_1$, $s_2$, $\cdots$, $s_k$.
+\end{lemma}
+
+By using the above lemma, we can show a similar inequality for Rademacher average. 
+
+\begin{lemma}
+\label{lem1}
+$$\Pr[\E R_S(F) \geq R_S(F) + t] \leq \exp\left(-\frac{kt^2}{4m\E R_S(F)}\right),$$
+where $\E$ takes randomness over the samplings $s_1$, $s_2$, $\cdots$, $s_k$.
+\end{lemma}
+\begin{proof}
+It suffices to show that $R_S(F)$ is a self bounding function with constant $c=2m/k$.
+Define
+$$Z = R_S(F) = \E_\sigma \sup_{f\in F} \left[\frac{2}{k}\sum_{i=1}^k \sigma_i f(s_i) \right],$$
+$$G_j = \E_\sigma \sup_{f\in F} \left[\frac{2}{k}\sum_{i\not= j} \sigma_i f(s_i) \right].$$
+It is clear that $Z$ is non-negative:
+$$Z \geq \sup_{f\in F} \left[ \E_\sigma \frac{2}{k}\sum_{i=1}^k \sigma_i f(s_i) \right]=0.$$
+Also it is clear that $Z \geq G_j$ for each $j$: suppose $\tilde{f}$ achieves the supreme of $G_j$. Then
+$$\begin{aligned}
+G_j &= \E_\sigma \left[\frac{2}{k}\sum_{i=1}^k \sigma_i \tilde{f}(s_i) - \frac{2}{k} \sigma_j \tilde{f}(s_j)\right] \\
+&= \E_\sigma \left[\frac{2}{k}\sum_{i=1}^k \sigma_i \tilde{f}(s_i)\right] - \E_\sigma \left[ \frac{2}{k} \sigma_j \tilde{f}(s_j)\right] \\
+&= \E_\sigma \left[\frac{2}{k}\sum_{i=1}^k \sigma_i \tilde{f}(s_i) \right]  \leq Z.
+\end{aligned}$$
+Next we show $Z- G_j \leq 2m/k =c$:
+$$\begin{aligned}
+G_j &= \E_\sigma \sup_{f\in F} \left[ \frac{2}{k} \sum_{i=1}^k \sigma_i f(s_i) - \frac{2}{k} \sigma_j f(s_j) \right] \\
+&\geq \E_\sigma \sup_{f\in F} \left[ \frac{2}{k} \sum_{i=1}^k \sigma_i f(s_i) \right] - \E_\sigma \sup_{f\in F} \left[ \frac{2}{k} \sigma_j f(s_j) \right] \\
+&\geq \E_\sigma \sup_{f\in F} \left[ \frac{2}{k} \sum_{i=1}^k \sigma_i f(s_i) \right] - \frac{2m}{k}.
+\end{aligned}$$
+Finally we need to verify $\sum_{j=1}^k Z-G_j \leq Z$:
+$$\begin{aligned}
+\sum_{j=1}^k G_j &= \E_\sigma \sum_{j=1}^k \sup_{f\in F} \left[ \frac{2}{k}\sum_{i\not= j} \sigma_i f(s_i) \right]\\
+&\geq \E_\sigma \sup_{f\in F}\left[ \frac{2}{k} \sum_{j=1}^k \sum_{i\not= j} \sigma_i f(s_i) \right]\\
+&=\frac{2(k-1)}{k} \E_\sigma \sup_{f\in F}\left[\sum_{j=1}^k \sigma_i f(s_i) \right] = (k-1)Z.
+\end{aligned}$$
+\end{proof}
+
+We still need the following lemma on the relation between uniform deviation and Rademacher average.
+
+\begin{lemma}
+\label{lem2}
+$$\E \sup_{f\in F} [ A_S(f) - A_D(f) ] \leq \E R_S(F),$$
+$$\E \sup_{f\in F} [ A_D(f) - A_F(f) ] \leq \E R_S(F).$$
+Here we take randomness over the $k$ samplings.
+\end{lemma}
+\begin{proof}
+The proof idea is based on ghost samplings, i.e., independently draw another $k$ samples: $s_1'$, $\cdots$, $s_k'$, and then we have
+$$A_D(f) = \frac{1}{m}\sum_{i=1}^m f(i) = \E \frac{1}{k} \sum_{j=1}^k f(s_j'),$$
+where $\E$ takes randomness over the $k$ ghost samples.
+Thus
+$$\begin{aligned}
+\E \sup_{f\in F} [ A_S(f) - A_D(f) ] &= \E \sup_{f\in F} \left[\frac{1}{k} \sum_{i=1}^k f(s_i) - \E \frac{1}{k} \sum_{j=1}^k f(s_j') \right]\\
+&\leq \E \sup_{f\in F} \left[\frac{1}{k} \sum_{i=1}^k f(s_i) - \frac{1}{k} \sum_{j=1}^k f(s_j') \right].\\
+\end{aligned}$$
+Since all the samples $s$, $s'$ are independently identically distributed, flipping the sign of $f(s_i) - f(s_i')$ will not change the expected supreme, i.e.,
+$$\E \sup_{f\in F} \left[\frac{1}{k} \sum_{i=1}^k f(s_i) - \frac{1}{k} \sum_{j=1}^k f(s_j') \right] = \E \sup_{f\in F} \frac{1}{k} \sum_{i=1}^k \left[\sigma_i (f(s_i) - f(s_i')) \right],$$
+where $\sigma_i$ is uniformly distributed over $\{-1, 1\}$.
+Since 
+$$\E \sup_{f\in F} \frac{1}{k} \sum_{i=1}^k \left[\sigma_i (f(s_i) - f(s_i')) \right] \leq 2 \E \sup_{f\in F} \frac{1}{k} \sum_{i=1}^k \sigma_i f(s_i)  = \E R_S(F),$$
+we have shown the first inequality. The second inequality is analogous.
+\end{proof}
+
+We also need McDiarmid's inequality \cite{M89}.
+\begin{lemma}
+\cite{M89} Let $s_1$, $\cdots$, $s_k$ be independent random variables taking values from a set $D$. Suppose a function $h: D^k \to \mathbb{R}$ satisfies
+$$\sup_{x_1,\cdots,x_k,x_i'\in D} |h(x_1,\cdots,x_k) - h(x_1,\cdots,x_{i-1},x_i',x_{i+1},\cdots,x_k)| \leq c_i$$
+for some constants $c_i$ and every $1\leq i \leq k$. Then for any $t>0$, we have
+$$\Pr[h(s_1,\cdots,s_k) - \E h(s_1,\cdots,s_k) \geq t] \leq \exp\left(-\frac{2t^2}{\sum_{i=1}^k c_i^2}\right).$$
+\end{lemma}
+
+By the above three lemmas, we can bound the difference between true average and sampled average as follows.
+\begin{lemma}
+$$\begin{aligned}
+&\Pr\left[\sup_{f\in F} |A_D(f) - A_S(f)| \geq R_S(F) + t\right] \\
+\leq& 4\exp\left(-\frac{2kt^2}{(m+\sqrt{8m\E R_S(F)})^2} \right).\end{aligned}$$
+\end{lemma}
+\begin{proof}
+First by Lemma \ref{lem2},
+$$\begin{aligned}
+&\Pr\left[\sup_{f\in F} [A_D(f) - A_S(f)] \geq R_S(F) + t\right] \\
+\leq& \Pr\left[\sup_{f\in F} [A_D(f) - A_S(f)] \geq \E\sup_{f\in F} [A_D(f) - A_S(f)] + at\right] \\
+&+ \Pr\left[\E R_S(F) \geq R_S(F)+(1-a)t\right] \\
+\end{aligned}$$
+for any $a\in [0,1]$. Let
+$$h(s_1,\cdots,s_k) = A_D(f) - A_S(f) = A_D(f) - \frac{1}{k}\sum_{i=1}^k f(s_i).$$
+It is clear that 
+$$\begin{aligned}
+&\sup_{x_1,\cdots,x_k,x_i'\in D} |h(x_1,\cdots,x_k) - h(x_1,\cdots,x_{i-1},x_i',x_{i+1},\cdots,x_k)| \\
+=&\sup_{x_1,\cdots,x_k,x_i'\in D} \left|\frac{1}{k}\sum_{j=1, j\not=i}^k f(x_j)+\frac{1}{k}f(x_i') - \frac{1}{k}\sum_{i=1}^k f(x_i)\right| \\
+=&\sup_{x_1,\cdots,x_k,x_i'\in D} \left|\frac{1}{k}f(x_i') - \frac{1}{k} f(x_i)\right| \leq \frac{m}{k}.
+\end{aligned}$$
+By McDiarmid's inequality,
+$$\begin{aligned}
+&\Pr\left[\sup_{f\in F} [A_D(f) - A_S(f)] \geq \E\sup_{f\in F} [A_D(f) - A_S(f)] + at\right] \\
+\leq& \exp\left(-\frac{2a^2t^2}{\sum_{i=1}^k m^2/k^2}\right)
+=\exp\left(-\frac{2ka^2t^2}{m^2}\right).
+\end{aligned}$$
+
+By Lemma \ref{lem1},
+$$\Pr\left[\E R_S(F) \geq R_S(F)+(1-a)t\right] \leq \exp\left(-\frac{k(1-a)^2t^2}{4m\E R_S(F)}\right).$$
+Let $a = 1/(1+\sqrt{8\E R_S(F) / m})$. Then putting everything together, we have 
+$$\begin{aligned}
+&\Pr\left[\sup_{f\in F} [A_D(f) - A_S(f)] \geq R_S(F) + t\right] \\
+\leq& 2\exp\left(-\frac{2kt^2}{(m+\sqrt{8m\E R_S(F)})^2} \right).\end{aligned}$$
+Similarly one can show 
+$$\begin{aligned}
+&\Pr\left[\sup_{f\in F} [A_S(f) - A_D(f)] \geq R_S(F) + t\right] \\
+\leq& 2\exp\left(-\frac{2kt^2}{(m+\sqrt{8m\E R_S(F)})^2} \right).\end{aligned}$$
+Thus we have the inequality as desired.
+\end{proof}
+By the above lemma we have the following important corollary.
+\begin{corollary}
+With probability at least $1-\delta$, we have
+$$\sup_{f\in F}|A_S(f) - A_D(f)| \leq R_S(F) + (m+\sqrt{8m \E R_S(F)})\sqrt{\frac{\log \frac{4}{\delta}}{2k}}.$$
+\end{corollary}
+
+We still need to upper bound $\E R_S(F)$. By Lemma \ref{lem1}, with probability at least $1-\delta$,
+$$\E R_S(F) \leq R_S(F) + \sqrt{4m\E R_S(F)\frac{\log \frac{1}{\delta}}{k}}.$$
+Or equivalently,
+$$\sqrt{\E R_S(F)} \leq \sqrt{\frac{m}{k}\log \frac{1}{\delta}} + \sqrt{\frac{m}{k}\log \frac{1}{\delta} + R_S(F)}.$$
+Hence with probability at least $1-2\delta$, we have
+$$\sup_{f\in F}|A_S(f) - A_D(f)| \leq R_S(F) + \left(m+m\sqrt{\frac{8}{k}\log \frac{1}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{1}{\delta} + R_S(F)}\right)\sqrt{\frac{\log \frac{4}{\delta}}{2k}}.$$
+We have shown Theorem \ref{thm:main}.
+
+
+\section{Proof of Theorem \ref{thm2}}
+For any $s>0$, by Jensen's inequality,
+$$\begin{aligned}
+\exp(skR_S(F)) & = \exp\left(2s\E_\sigma \sup_{f\in F} \sum_{i=1}^k \sigma_i f(s_i)\right) \\
+&\leq \E_\sigma \exp\left(2s \sup_{f\in F} \sum_{i=1}^k \sigma_i f(s_i)\right) \\
+&\leq \E_\sigma \sum_{f\in F} \exp\left(2s\sum_{i=1}^k \sigma_i f(s_i)\right).
+\end{aligned}$$
+By Hoeffding's Lemma \cite{H63},
+$$\begin{aligned}
+&\E_\sigma \sum_{f\in F} \exp\left(2s\sum_{i=1}^k \sigma_i f(s_i)\right) \\
+\leq & \sum_{f\in F}\prod_{i=1}^k \exp\left(2s^2f(s_i)^2\right) \\
+=& |F| \exp\left(2s^2\sum_{i=1}^k f(s_i)^2\right).
+\end{aligned}$$
+Let $\ell^2 = \sup_{f\in F}\sum_{i=1}^k f(s_i)^2$, and then
+$$\exp(skR_S(F)) \leq |F| \exp\left(2s^2\ell^2\right).$$
+Let
+$$s = \frac{kR_S(F)}{4\ell^2}.$$
+Then 
+$$R_S(F) \leq \frac{\ell}{k}\sqrt{8\log |F|}.$$ 
