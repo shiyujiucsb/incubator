@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=latex 2016.9.6)  12 SEP 2016 22:10
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=latex 2016.9.6)  14 SEP 2016 14:26
 entering extended mode
 **./score_search.tex
 (score_search.tex
@@ -495,19 +495,19 @@ File: system_model.eps Graphic file (type eps)
 
 
 ]
-LaTeX Font Info:    Try loading font information for OT1+phv on input line 98.
+LaTeX Font Info:    Try loading font information for OT1+phv on input line 100.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\ot1phv.fd"
 File: ot1phv.fd 2001/06/04 scalable font definitions for OT1/phv.
-) [2] (graph_list_tikz.tex) [3] (score_search.bbl)
+) [2] [3] (graph_list_tikz.tex) (score_search.bbl)
 [4] (score_search.aux) ) 
 Here is how much of TeX's memory you used:
  12337 strings out of 493335
  247248 string characters out of 3136699
- 296630 words of memory out of 3000000
+ 297317 words of memory out of 3000000
  15661 multiletter control sequences out of 15000+200000
  34718 words of font info for 83 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,8n,54p,1401b,671s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 55i,8n,54p,1738b,671s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on score_search.dvi (4 pages, 50456 bytes).
+Output written on score_search.dvi (4 pages, 53832 bytes).
