@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=latex 2016.9.6)  14 SEP 2016 21:26
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=latex 2016.9.6)  15 SEP 2016 01:01
 entering extended mode
 **./cos_sim_apprx.tex
 (cos_sim_apprx.tex
@@ -450,15 +450,15 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 \c@corollary=\count131
  [1
 
-] [2] [3] [4] (cos_sim_apprx.bbl [5]) (appendix.tex
-[6] [7] [8] [9]) [10] [11] (cos_sim_apprx.aux) ) 
+] [2] [3] [4] (cos_sim_apprx.bbl [5] [6])
+(appendix.tex [7] [8] [9] [10]) [11] [12] (cos_sim_apprx.aux) ) 
 Here is how much of TeX's memory you used:
- 12051 strings out of 493335
- 237590 string characters out of 3136699
- 281189 words of memory out of 3000000
- 15360 multiletter control sequences out of 15000+200000
- 11849 words of font info for 46 fonts, out of 3000000 for 9000
+ 12071 strings out of 493335
+ 237860 string characters out of 3136699
+ 286204 words of memory out of 3000000
+ 15378 multiletter control sequences out of 15000+200000
+ 12754 words of font info for 49 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,12n,54p,969b,287s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 55i,12n,54p,969b,310s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on cos_sim_apprx.dvi (11 pages, 54964 bytes).
+Output written on cos_sim_apprx.dvi (12 pages, 61320 bytes).
