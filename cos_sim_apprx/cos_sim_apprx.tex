@@ -5,9 +5,9 @@
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{amsmath}
-%\usepackage{algorithm}
-%\usepackage{algorithmicx}
-%\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
 %\usepackage{booktabs}
 %\usepackage{color}
 
@@ -32,7 +32,7 @@
 \theoremstyle{plain}
 
 \section{Introduction}
-All-pairs similarity search (APSS) has received extensive research interest recently \cite{BMS07,Xia16,ATY13,TAJY14}. To improve performance, many approximation approaches have been proposed \cite{GIM99,FKS03,IM98,Char02}. This paper considers an approximation method for cosine similarity based search, which is one of the most popular APSS solutions \cite{SGM00,Xia16,ATY13,TAJY14}. The approximation error of our algorithm is upper bounded by using Rademacher average \cite{BM02,Mohri09,BBM05}.
+All-pairs similarity search (APSS) has received extensive research interest recently \cite{BMS07,Xia16,ATY13,TAJY14}. To improve performance, many approximation approaches have been proposed \cite{GIM99,FKS03,IM98,Char02}. This paper considers two approximation methods for cosine similarity based search \cite{SGM00,Xia16,ATY13,TAJY14}, and SimRank based search \cite{JW02,LH10,FNS13,KMK14} respectively. The approximation error of each our algorithm is upper bounded by using Rademacher average \cite{BM02,Mohri09,BBM05}.
 
 \section{Problem Formulation and Preliminaries}
 \subsection{Cosine Similarity}
@@ -45,6 +45,14 @@ $$Sim(u,v) = \frac{1}{m} \sum_{i=1}^m u_i\cdot v_i.$$
 That is, the similarity is defined as the average on the corresponding feature products between the vectors. 
 
 To do the all-pairs similarity search (APSS), we need to compute the similarity between each pair of vectors. Since there are $n(n-1)$ pairs, and for each pair we need $m$ times of multiplication, the total complexity of a naiive algorithm is $O(n^2 m)$. Fortunately, there are many methods to detect dissimilar pairs (two vectors without sharing any feature) \cite{ATY13,TAJY14,Lin09}, which can save a lot of computation. For the state-of-art works, to compute all the pairs, the complexity can be lowered to $O(nkm)$, where $k$ is much less than $n$. However, to the best of our knowledge, there were few discussions on the size of features $m$. If we can only consider a part of the $m$ features without significantly deteriorating the accuracy, then the total computation time for APSS can be lowered significantly (note that $nk$ is still large for very big dataset). We can approximating the similarity by sampling on the features.
+
+\subsection{SimRank}
+SimRank \cite{JW02} is a popular measure of the similarity between two nodes in a graph based on the idea that similar nodes are often referred by other similar nodes. Denote by $s(a,b)$ the SimRank between nodes $a$ and $b$. If $a=b$, then $s(a,b)$ is defined to be 1. Otherwise, 
+$$s(a,b) = \frac{c}{|I(a)|\cdot|I(b)|}\sum_{i\in I(a)}\sum_{j\in I(b)}s(i,j),$$
+where $c$ is a constant in $(0,1)$ and $I(a)$ denotes the in-neighbors of $a$. If there is an edge from $a$ to $b$, then $a$ is an in-neighbor of $b$. 
+An important fact is that SimRank can be equivalently built upon Random Surfer-Pairs Model \cite{JW02}. That is, $s(a,b)$ can also be written as follows:
+$$s(a,b) = \sum_{t: (a,b) (x,x)} P[t]\cdot c^{L(t)},$$
+where $t$ is a pair of random walks with the same number of steps, which lead $a$ and $b$ to meet at one node $x$, and $P[t]$ denotes the probability when $t$ is chosen, and $L(t)$ denotes the number of steps of each walk in $t$. Here we take random walks from the reverse graph, in which each edge is reversed compared with the original graph. A random walk works as follows: in the tour at any node, which has $k$ out-edges, we take one of the $k$ edge with equal probability $1/k$ as our next step. Note that as the length of random walk grows, its contribution to $s(a,b)$ decreases exponentially. Hence in practice, we only need to consider relatively short walks, e.g., with length no more than $T$.
 
 \subsection{Rademacher Average}
 This section proposes our approximation algorithm and its analysis.
@@ -68,6 +76,7 @@ We leave the proofs to the Appendix.
 
 \begin{theorem}
 \label{thm:main}
+Let $F$ be a collection of functions $f$ mapping $D$ to $[0,m]$. 
 With probability at least $1-\delta$, we have
 $$\sup_{f\in F}|A_S(f) - A_D(f)| \leq R_S(F) + \left(m+m\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{2}{\delta} + R_S(F)}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}.$$
 \end{theorem}
@@ -81,6 +90,75 @@ where $\ell^2 = \sup_{f\in F}\sum_{i=1}^k f(s_i)^2$.
 \end{theorem}
 
 By the above two theorems, we can bound our approximation error even for the worst case.
+
+
+\section{Approximating Cosine Similarities}
+The approximation algorithm takes as input a collection of $n$ vectors $V$ and two parameters $(\epsilon, \delta)$ whose values are between 0 and 1. The algorithm outputs a set $C = \{\tilde{S}(u,v): u,v \in V, u\not= v\}$, where $\tilde{S}(u,v)$ is the $(\epsilon, \delta)$- approximation of cosine similarity between $u$ and $v$, i.e., with probability at least $1-\delta$, the worst approximation error in $C$ is at most $\epsilon$. Each vector in $V$ contains $m$ features. We take the $m$ features as the sample space $D = \{1,\cdots,m\}$. For each feature $s\in D$, let $f_{u,v}(s) = u_s\cdot v_s$, where $u_s$ is the $s$-th feature value of the vector $u$. Let $F = \{f_{u,v}: u,v\in V, u\not= v\}$. Thus $|F| < n^2/2$ since symmetry of cosine similarity. It is clear that the true average of $f_{u,v}$ equals to the cosine similarity between $u$ and $v$. Given the sampled features, the upper bound of $R_S(F)$ is 
+$$R_S(F) \leq \frac{\ell}{k}\sqrt{8\log |F|} < \frac{4\ell\sqrt{\log n}}{k},$$
+where $\ell = \max_{f\in F} \sum_{i=1}^k f(s_i)^2$. Since $F$ is finite, we can replace supreme by maximum. 
+
+The approximation algorithm works in an iterative mode. For each iteration, we sample some new features $s_i$'s among $D$ and aggregate the feature products given by $f_{u,v}(s_i)$ for each $f_{u,v}$ in $F$. Then we compute the error upper bound:
+$$\Delta = \frac{4\ell\sqrt{\log n}}{k} +\left(m+m\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{4\ell\sqrt{\log n}}{k}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}},$$
+where $\ell = \max_{f\in F} \sum_{i=1}^k f(s_i)^2$, and $k$ is the number of aggregated samples. 
+If $\Delta \leq \epsilon$, then we stop and return the averages $\frac{1}{k}\sum_{s_i\in S}f_{u,v}(s_i)$ for each pair $u, v$. Otherwise, we continue to the next round, where we will sample more features. If $\Delta \leq \epsilon$ can never be satisfied, at the end we will sample all the $m$ features and return the averages as the exact solution.
+
+It is clear to verify the correctness of our algorithm by Theorem \ref{thm:main} and Theorem \ref{thm2}.
+
+
+\section{Approximating SimRank}
+We approximate SimRank scores on the nodes in the digraph $G=(V,E)$. 
+The basic idea is similar to the case of cosine similarity approximation, but the sample space $D$ is changed to the $2T$-dimensional manifold $[0,1]^{2T}$, where $[0,1]$ is the interval of real numbers between 0 and 1, and $F$ is now defined as
+$$F = \{f_{a,b} : a,b\in V, a\not= b\},$$
+where given any two nodes $a$, $b$, the function $f_{a,b}$ takes a sample $s_i\in D$ as input and outputs a value in the interval $[0,1]$. Algorithm \ref{alg:rwg} shows how to generate a random walk given a sample from $[0,1]^T$ and a starting node $a$. It is clear that the random walk chosen by Algorithm \ref{alg:rwg} is uniformly distributed if the sample is uniformly drawn from $[0,1]^T$. Thus given two nodes $a$, $b$ and a sample $s_i \in [0,1]^{2T}$, we can generate two random walks $W_a$, $W_b$ starting from $a$ and $b$ respectively. Let 
+$$l_{a,b}(s_i) = \min\{j: 1\leq j\leq T, W_a[j] = W_b[j]\},$$
+i.e., the number of steps before two surfers starting from $a$, $b$ meet at some node. If $W_a$ and $W_b$ never meet within $T$ steps, $l_{a,b}(s_i)$ is defined to be 0.
+
+\begin{algorithm}[!t]
+\caption{\emph{Random Walk Generation}}
+\label{alg:rwg}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\begin{algorithmic}
+\Require{reversed graph $\overline{G}$, sequence $(s_1,\cdots,s_T) \in [0,1]^T$, starting node $a$.}
+\Ensure{a random walk $W = (a,\cdots)$ starting from $a$.}
+\State Let $W$ be a sequence of length $T+1$;
+\State $W[0] \gets a$;
+\For {$i$ from 1 to $T$}
+	\State $I \gets \{b: \textrm{there is an edge in $\overline{G}$ from $W[i-1]$ to $b$}\}$;
+	\State $k \gets |I|$;
+	\If{k=0}
+		\State $W[i] \gets W[i-1]$;
+	\Else
+		\State Sort $I$ in lexicographical order: $(I[0],\cdots,I[k-1])$;
+		\State $x \gets \lfloor s_{i-1} * k \rfloor$;
+		\State $W[i] \gets I[x]$;
+	\EndIf
+\EndFor
+\State {\bf return} W.
+\end{algorithmic}
+\end{algorithm}
+
+The function $f_{a,b}(s_i)$ is defined as 
+$$f_{a,b}(s_i) =\begin{cases}
+0 & \textrm{if $l_{a,b}(s_i)=0$,} \\
+c^{l_{a,b}(s_i)} & \textrm{otherwise}.\\
+\end{cases}$$
+It is clear that the true average $A_D(f_{a,b})$ equals to the SimRank between the nodes $a$ and $b$. Thus a similar approximation idea based on Rademacher average can be applied. We still need to upper bound the worst approximation error. The new bound is stated as follows.
+
+\begin{theorem}
+\label{thm:new}
+Let $F$ be a collection of functions $f$ mapping $D$ to $[0,1]$. 
+With probability at least $1-\delta$, we have
+$$\sup_{f\in F}|A_S(f) - A_D(f)| \leq R_S(F) + \left(1+1\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + 1\sqrt{\frac{8}{k}\log \frac{2}{\delta} + R_S(F)}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}.$$
+\end{theorem}
+The proof is essentially the same as the proof of Theorem \ref{thm:main}. We leave the discussions to the Appendix. Also the upper bound of $R_S(F)$ given by Theorem \ref{thm2} remains unchanged.
+
+Our approximation algorithm works as follows. For each iteration, we sample some new features $s_i$'s among $D$, generate random walks $W_a$, $W_b$ from nodes $a$, $b$ given $s_i$ and aggregate $f_{a,b}(s_i)$ for each $f_{a,b}$ in $F$. Then we compute the error upper bound:
+$$\Delta = \frac{4\ell\sqrt{\log n}}{k} +\left(1+1\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + 1\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{4\ell\sqrt{\log n}}{k}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}},$$
+where $\ell = \max_{f\in F} \sum_{i=1}^k f(s_i)^2$, and $k$ is the aggregated samples. 
+If $\Delta \leq \epsilon$, then we stop and return the averages $\frac{1}{k}\sum_{s_i\in S}f_{a,b}(s_i)$ for each pair $u, v$. Otherwise, we continue to the next round, where we will sample more features. If $\Delta \leq \epsilon$ can never be satisfied with a certain number of iterations, we return the approximated SimRank scores of node pairs, with the message that the input parameters $(\epsilon,\delta)$ cannot be satisfied by our algorithm.
+
+It is clear to verify the correctness of our algorithm by Theorem \ref{thm:new} and Theorem \ref{thm2}.
 
 %\bibliographystyle{./IEEEtran}
 \bibliographystyle{plain}

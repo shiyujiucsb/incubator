@@ -48,6 +48,12 @@ Ronald Fagin, Ravi Kumar, and Dandapani Sivakumar.
 \newblock In {\em Proceedings of the 2003 ACM SIGMOD international conference
   on Management of data}, pages 301--312. ACM, 2003.
 
+\bibitem{FNS13}
+Yasuhiro Fujiwara, Makoto Nakatsuji, Hiroaki Shiokawa, and Makoto Onizuka.
+\newblock Efficient search algorithm for simrank.
+\newblock In {\em Data Engineering (ICDE), 2013 IEEE 29th International
+  Conference on}, pages 589--600. IEEE, 2013.
+
 \bibitem{GIM99}
 Aristides Gionis, Piotr Indyk, Rajeev Motwani, et~al.
 \newblock Similarity search in high dimensions via hashing.
@@ -65,6 +71,26 @@ Piotr Indyk and Rajeev Motwani.
   dimensionality.
 \newblock In {\em Proceedings of the thirtieth annual ACM symposium on Theory
   of computing}, pages 604--613. ACM, 1998.
+
+\bibitem{JW02}
+Glen Jeh and Jennifer Widom.
+\newblock Simrank: a measure of structural-context similarity.
+\newblock In {\em Proceedings of the eighth ACM SIGKDD international conference
+  on Knowledge discovery and data mining}, pages 538--543. ACM, 2002.
+
+\bibitem{KMK14}
+Mitsuru Kusumoto, Takanori Maehara, and Ken-ichi Kawarabayashi.
+\newblock Scalable similarity search for simrank.
+\newblock In {\em Proceedings of the 2014 ACM SIGMOD international conference
+  on Management of data}, pages 325--336. ACM, 2014.
+
+\bibitem{LH10}
+Cuiping Li, Jiawei Han, Guoming He, Xin Jin, Yizhou Sun, Yintao Yu, and Tianyi
+  Wu.
+\newblock Fast computation of simrank for static and dynamic information
+  networks.
+\newblock In {\em Proceedings of the 13th International Conference on Extending
+  Database Technology}, pages 465--476. ACM, 2010.
 
 \bibitem{Lin09}
 Jimmy Lin.

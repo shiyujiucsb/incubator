@@ -1,4 +1,4 @@
-\section{Proof of Theorem \ref{thm:main}}
+\subsection{Proof of Theorem \ref{thm:main}}
 In this section, we show our main result (Theorem \ref{thm:main}).
 We start from the definition of self bounding function \cite{Oneto13}.
 \begin{definition}
@@ -138,7 +138,7 @@ $$\sup_{f\in F}|A_S(f) - A_D(f)| \leq R_S(F) + \left(m+m\sqrt{\frac{8}{k}\log \f
 We have shown Theorem \ref{thm:main}.
 
 
-\section{Proof of Theorem \ref{thm2}}
+\subsection{Proof of Theorem \ref{thm2}}
 For any $s>0$, by Jensen's inequality,
 $$\begin{aligned}
 \exp(skR_S(F)) & = \exp\left(2s\E_\sigma \sup_{f\in F} \sum_{i=1}^k \sigma_i f(s_i)\right) \\
@@ -157,3 +157,7 @@ Let
 $$s = \frac{kR_S(F)}{4\ell^2}.$$
 Then 
 $$R_S(F) \leq \frac{\ell}{k}\sqrt{8\log |F|}.$$ 
+
+
+\subsection{Discussions of Theorem \ref{thm:new}}
+Theorem \ref{thm:new} can be treated as a special case of Theorem \ref{thm:main} when $m=1$. All the reasoning will not be affected and thus the desired bound follows.
