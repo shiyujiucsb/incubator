@@ -31,10 +31,29 @@ Roberto~J Bayardo, Yiming Ma, and Ramakrishnan Srikant.
 \newblock In {\em Proceedings of the 16th international conference on World
   Wide Web}, pages 131--140. ACM, 2007.
 
+\bibitem{BCY09}
+Jacob Benesty, Jingdong Chen, Yiteng Huang, and Israel Cohen.
+\newblock Pearson correlation coefficient.
+\newblock In {\em Noise reduction in speech processing}, pages 1--4. Springer,
+  2009.
+
 \bibitem{BLM99}
 S~Boucheron, G~Lugosi, and Pascal Massart.
 \newblock A sharp concentration inequality with applications.
 \newblock {\em Random Structures and Algorithms}, 1999.
+
+\bibitem{Bran01}
+Ulrik Brandes.
+\newblock A faster algorithm for betweenness centrality*.
+\newblock {\em Journal of mathematical sociology}, 25(2):163--177, 2001.
+
+\bibitem{CCK12}
+Liangliang Cao, Brian Cho, Hyun~Duk Kim, Zhen Li, Min-Hsuan Tsai, and Indranil
+  Gupta.
+\newblock Delta-simrank computing on mapreduce.
+\newblock In {\em Proceedings of the 1st International Workshop on Big Data,
+  Streams and Heterogeneous Source Mining: Algorithms, Systems, Programming
+  Models and Applications}, pages 28--35. ACM, 2012.
 
 \bibitem{Char02}
 Moses~S Charikar.
@@ -58,6 +77,20 @@ Yasuhiro Fujiwara, Makoto Nakatsuji, Hiroaki Shiokawa, and Makoto Onizuka.
 Aristides Gionis, Piotr Indyk, Rajeev Motwani, et~al.
 \newblock Similarity search in high dimensions via hashing.
 \newblock {\em VLDB}, 99(6):518--529, 1999.
+
+\bibitem{HHH89}
+Lieve Hamers, Yves Hemeryck, Guido Herweyers, Marc Janssen, Hans Keters, Ronald
+  Rousseau, and Andr{\'e} Vanhoutte.
+\newblock Similarity measures in scientometric research: the jaccard index
+  versus salton's cosine formula.
+\newblock {\em Information Processing \& Management}, 25(3):315--318, 1989.
+
+\bibitem{HFL10}
+Guoming He, Haijun Feng, Cuiping Li, and Hong Chen.
+\newblock Parallel simrank computation on large graphs with iterative
+  aggregation.
+\newblock In {\em Proceedings of the 16th ACM SIGKDD international conference
+  on Knowledge discovery and data mining}, pages 543--552. ACM, 2010.
 
 \bibitem{H63}
 Wassily Hoeffding.
@@ -117,6 +150,30 @@ Luca Oneto, Alessandro Ghio, Davide Anguita, and Sandro Ridella.
   self bounding property.
 \newblock {\em Neural Networks}, 44:107--111, 2013.
 
+\bibitem{RK14}
+Matteo Riondato and Evgenios~M Kornaropoulos.
+\newblock Fast approximation of betweenness centrality through sampling.
+\newblock In {\em Proceedings of the 7th ACM international conference on Web
+  search and data mining}, pages 413--422. ACM, 2014.
+
+\bibitem{RK16}
+Matteo Riondato and Evgenios~M Kornaropoulos.
+\newblock Fast approximation of betweenness centrality through sampling.
+\newblock {\em Data Mining and Knowledge Discovery}, 30(2):438--475, 2016.
+
+\bibitem{RU15}
+Matteo Riondato and Eli Upfal.
+\newblock Mining frequent itemsets through progressive sampling with rademacher
+  averages.
+\newblock In {\em Proceedings of the 21th ACM SIGKDD International Conference
+  on Knowledge Discovery and Data Mining}, pages 1005--1014. ACM, 2015.
+
+\bibitem{RU16}
+Matteo Riondato and Eli Upfal.
+\newblock Abra: Approximating betweenness centrality in static and dynamic
+  graphs with rademacher averages.
+\newblock {\em arXiv preprint arXiv:1602.05866}, 2016.
+
 \bibitem{SGM00}
 Alexander Strehl, Joydeep Ghosh, and Raymond Mooney.
 \newblock Impact of similarity measures on web-page clustering.
@@ -129,11 +186,38 @@ Xun Tang, Maha Alabduljalil, Xin Jin, and Tao Yang.
 \newblock In {\em Proceedings of the 37th international ACM SIGIR conference on
   Research \& development in information retrieval}, pages 193--202. ACM, 2014.
 
+\bibitem{TP07}
+Sandeep Tata and Jignesh~M Patel.
+\newblock Estimating the selectivity of tf-idf based cosine similarity
+  predicates.
+\newblock {\em ACM Sigmod Record}, 36(2):7--12, 2007.
+
+\bibitem{Vap13}
+Vladimir Vapnik.
+\newblock {\em The nature of statistical learning theory}.
+\newblock Springer Science \& Business Media, 2013.
+
+\bibitem{VLL94}
+Vladimir Vapnik, Esther Levin, and Yann Le~Cun.
+\newblock Measuring the vc-dimension of a learning machine.
+\newblock {\em Neural Computation}, 6(5):851--876, 1994.
+
+\bibitem{Vap98}
+Vladimir~Naumovich Vapnik and Vlamimir Vapnik.
+\newblock {\em Statistical learning theory}, volume~1.
+\newblock Wiley New York, 1998.
+
 \bibitem{Xia16}
 Zhihua Xia, Xinhui Wang, Xingming Sun, and Qian Wang.
 \newblock A secure and dynamic multi-keyword ranked search scheme over
   encrypted cloud data.
 \newblock {\em IEEE Transactions on Parallel and Distributed Systems},
   27(2):340--352, 2016.
+
+\bibitem{YM15}
+Weiren Yu and Julie~Ann McCann.
+\newblock High quality graph-based similarity search.
+\newblock In {\em Proceedings of the 38th International ACM SIGIR Conference on
+  Research and Development in Information Retrieval}, pages 83--92. ACM, 2015.
 
 \end{thebibliography}
