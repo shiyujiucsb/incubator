@@ -102,6 +102,7 @@ The approximation algorithm takes as input a collection of $n$ vectors $V$ and t
 $$R_S(F) \leq \frac{\ell}{k}\sqrt{8\log |F|} < \frac{4\ell\sqrt{\log n}}{k},$$
 where $\ell = \sqrt{\max_{f\in F} \sum_{i=1}^k f(s_i)^2}$. Since $F$ is finite, we can replace supreme by maximum. 
 
+\subsection{The Algorithm}
 The approximation algorithm works in an iterative mode. For each iteration, we sample some new features $s_i$'s among $D$ and aggregate the feature products given by $f_{u,v}(s_i)$ for each $f_{u,v}$ in $F$. Then we compute the error upper bound:
 $$\Delta = \frac{4\ell\sqrt{\log n}}{k} +\left(m+m\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{mk}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}},$$
 where $\ell = \sqrt{\max_{f\in F} \sum_{i=1}^k f(s_i)^2}$, and $k$ is the number of aggregated samples. 
@@ -136,6 +137,14 @@ It is clear to verify the correctness of our algorithm by Theorem \ref{thm:main}
 \State {\bf return} $\mathsf{S}$.
 \end{algorithmic}
 \end{algorithm}
+
+\subsection{Improving the Upper Bound}
+Note that in the upper bound $\Delta$ of Algorithm \ref{alg:csa}, $m$ is a dominating variable: it is proportional to $\Delta$. Usually $m$ can be quite large, e.g., from 100 to 10K. Thus it is worth investigating how to mitigate the negative effect of large $m$. The idea comes from Theorem \ref{thm:main}, which assumes the range of each function $f$ is $[0,m]$. However in reality, most feature products $u[s]\cdot v[s]$ are close to zero due to sparsity, and its maximum value shall be much less than $m$. To further lower the upper bound $\Delta$, a variant of Algorithm \ref{alg:csa} may maintain a variable
+$$\hat{m} = \max_{s\in S, u,v \in V, u\not= v}u[s]\cdot v[s],$$
+where $S$ is the set of sampled features, and $V$ is the set of all vectors. Intuitively, $\hat{m}$ is the maximum value of all the sampled feature products. 
+Then we may choose the upper bound as follows:
+$$\Delta = \frac{4\ell\sqrt{\log n}}{k} +\hat{m}\left(1+\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + \sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{\hat{m}k}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}.$$
+We use experiments to show that the improvement of the variant above is significant. 
 
 \section{Approximating SimRank}
 We approximate SimRank scores on the nodes in the digraph $G=(V,E)$. 
