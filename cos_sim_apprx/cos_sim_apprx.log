@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=latex 2016.9.6)  18 SEP 2016 00:38
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=latex 2016.9.6)  18 SEP 2016 02:15
 entering extended mode
 **./cos_sim_apprx.tex
 (cos_sim_apprx.tex
@@ -458,10 +458,10 @@ Missing character: There is no “ in font cmr10!
 Here is how much of TeX's memory you used:
  12086 strings out of 493335
  237961 string characters out of 3136699
- 282260 words of memory out of 3000000
+ 282261 words of memory out of 3000000
  15393 multiletter control sequences out of 15000+200000
  12754 words of font info for 49 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  55i,12n,54p,1644b,310s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on cos_sim_apprx.dvi (13 pages, 69352 bytes).
+Output written on cos_sim_apprx.dvi (13 pages, 70128 bytes).

@@ -83,7 +83,7 @@ We leave the proofs to the Appendix.
 \label{thm:main}
 Let $F$ be a collection of functions $f$ mapping $D$ to $[0,m]$. 
 With probability at least $1-\delta$, we have
-$$\sup_{f\in F}|A_S(f) - A_D(f)| \leq R_S(F) + \left(m+m\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{2}{\delta} + R_S(F)}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}.$$
+$$\sup_{f\in F}|A_S(f) - A_D(f)| \leq R_S(F) + \left(m+m\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{8R_S(F)}{m}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}.$$
 \end{theorem}
 
 The remaining item we need to upper bound is $R_S(F)$. Our result is similar to Massart's lemma \cite{AGO14}.
@@ -103,7 +103,7 @@ $$R_S(F) \leq \frac{\ell}{k}\sqrt{8\log |F|} < \frac{4\ell\sqrt{\log n}}{k},$$
 where $\ell = \sqrt{\max_{f\in F} \sum_{i=1}^k f(s_i)^2}$. Since $F$ is finite, we can replace supreme by maximum. 
 
 The approximation algorithm works in an iterative mode. For each iteration, we sample some new features $s_i$'s among $D$ and aggregate the feature products given by $f_{u,v}(s_i)$ for each $f_{u,v}$ in $F$. Then we compute the error upper bound:
-$$\Delta = \frac{4\ell\sqrt{\log n}}{k} +\left(m+m\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{4\ell\sqrt{\log n}}{k}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}},$$
+$$\Delta = \frac{4\ell\sqrt{\log n}}{k} +\left(m+m\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{mk}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}},$$
 where $\ell = \sqrt{\max_{f\in F} \sum_{i=1}^k f(s_i)^2}$, and $k$ is the number of aggregated samples. 
 If $\Delta \leq \epsilon$, then we stop and return the averages $\frac{1}{k}\sum_{s_i\in S}f_{u,v}(s_i)$ for each pair $u, v$. Otherwise, we continue to the next round, where we will sample more features. If $\Delta \leq \epsilon$ can never be satisfied, at the end we will sample all the $m$ features and return the averages as the exact solution. Algorithm \ref{alg:csa} gives the pseudocode of our solution.
 
@@ -127,7 +127,7 @@ It is clear to verify the correctness of our algorithm by Theorem \ref{thm:main}
 		\State $S(u,v) \gets S(u,v)+u[s]\cdot v[s]$;
 		\State $S \gets S\cup \{s\}$;
 	\EndFor
-	\State $\Delta \gets \frac{4\ell\sqrt{\log n}}{k} +\left(m+m\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{4\ell\sqrt{\log n}}{k}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}$;
+	\State $\Delta \gets \frac{4\ell\sqrt{\log n}}{k} +\left(m+m\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{mk}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}$;
 	\If {$\Delta \leq \epsilon$}
 		\State break the while loop;
 	\EndIf
@@ -181,12 +181,12 @@ It is clear that the true average $A_D(f_{a,b})$ equals to the SimRank between t
 \label{thm:new}
 Let $F$ be a collection of functions $f$ mapping $D$ to $[0,c]$. 
 With probability at least $1-\delta$, we have
-$$\sup_{f\in F}|A_S(f) - A_D(f)| \leq R_S(F) + \left(c+c\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + c\sqrt{\frac{8}{k}\log \frac{2}{\delta} + R_S(F)}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}.$$
+$$\sup_{f\in F}|A_S(f) - A_D(f)| \leq R_S(F) + \left(c+c\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + c\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{8R_S(F)}{c}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}.$$
 \end{theorem}
 The proof is essentially the same as the proof of Theorem \ref{thm:main}. We leave the discussions to the Appendix. Also the upper bound of $R_S(F)$ given by Theorem \ref{thm2} remains unchanged.
 
 Our approximation algorithm works as follows. For each iteration, we sample some new features $s_i$'s among $D$, generate random walks $W_a$, $W_b$ from nodes $a$, $b$ given $s_i$ and aggregate $f_{a,b}(s_i)$ for each $f_{a,b}$ in $F$. Then we compute the error upper bound:
-$$\Delta = \frac{4\ell\sqrt{\log n}}{k} +\left(c+c\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + c\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{4\ell\sqrt{\log n}}{k}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}},$$
+$$\Delta = \frac{4\ell\sqrt{\log n}}{k} +\left(c+c\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + c\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{ck}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}},$$
 where $\ell = \sqrt{\max_{f\in F} \sum_{i=1}^k f(s_i)^2}$, and $k$ is the aggregated samples. 
 If $\Delta \leq \epsilon$, then we stop and return the averages $\frac{1}{k}\sum_{s_i\in S}f_{a,b}(s_i)$ for each pair $u, v$. Otherwise, we continue to the next round, where we will sample more features. If $\Delta \leq \epsilon$ can never be satisfied with a certain number of iterations, we return the approximated SimRank scores of node pairs, with the message that the input parameters $(\epsilon,\delta)$ cannot be satisfied by our algorithm.
 
@@ -216,7 +216,7 @@ It is clear to verify the correctness of our algorithm by Theorem \ref{thm:new} 
 			\EndIf
 		\EndFor
 	\EndFor
-	\State $\Delta \gets \frac{4\ell\sqrt{\log n}}{k} +\left(c+c\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + c\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{4\ell\sqrt{\log n}}{k}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}$;
+	\State $\Delta \gets \frac{4\ell\sqrt{\log n}}{k} +\left(c+c\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + c\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{ck}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}$;
 	\If {$\Delta \leq \epsilon$}
 		\State break the while loop;
 	\EndIf
