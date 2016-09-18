@@ -57,7 +57,7 @@ $$s(a,b) = \frac{c}{|I(a)|\cdot|I(b)|}\sum_{i\in I(a)}\sum_{j\in I(b)}s(i,j),$$
 where $c$ is a constant in $(0,1)$ and $I(a)$ denotes the in-neighbors of $a$. If there is an edge from $a$ to $b$, then $a$ is an in-neighbor of $b$. 
 An important fact is that SimRank can be equivalently built upon Random Surfer-Pairs Model \cite{JW02}. That is, $s(a,b)$ can also be written as follows:
 $$s(a,b) = \sum_{t: (a,b) (x,x)} P[t]\cdot c^{L(t)},$$
-where $t$ is a pair of random walks with the same number of steps, which lead $a$ and $b$ to meet at one node $x$, and $P[t]$ denotes the probability when $t$ is chosen, and $L(t)$ denotes the number of steps of each walk in $t$. Here we take random walks from the reverse graph, in which each edge is reversed compared with the original graph. A random walk works as follows: in the tour at any node, which has $k$ out-edges, we take one of the $k$ edge with equal probability $1/k$ as our next step. Note that as the length of random walk grows, its contribution to $s(a,b)$ decreases exponentially. Hence in practice, we only need to consider relatively short walks, e.g., with length no more than $T$.
+where $t$ is a pair of random walks with the same number of steps, which lead $a$ and $b$ to meet at one node $x$, and $P[t]$ denotes the probability when $t$ is chosen, and $L(t)$ denotes the number of steps of each walk in $t$. Here we take random walks from the reversed graph, in which each edge is reversed compared with the original graph. A random walk works as follows: in the tour at any node, which has $k$ out-edges, we take one of the $k$ edge with equal probability $1/k$ as our next step. Note that as the length of random walk grows, its contribution to $s(a,b)$ decreases exponentially. Hence in practice, we only need to consider relatively short walks, e.g., with length no more than $T$.
 
 \subsection{Rademacher Average}
 This section proposes our approximation algorithm and its analysis.
@@ -100,11 +100,11 @@ By the above two theorems, we can bound our approximation error even for the wor
 \section{Approximating Cosine Similarities}
 The approximation algorithm takes as input a collection of $n$ vectors $V$ and two parameters $(\epsilon, \delta)$ whose values are between 0 and 1. The algorithm outputs a set $C = \{\tilde{S}(u,v): u,v \in V, u\not= v\}$, where $\tilde{S}(u,v)$ is the $(\epsilon, \delta)$- approximation of cosine similarity between $u$ and $v$, i.e., with probability at least $1-\delta$, the worst approximation error in $C$ is at most $\epsilon$. Each vector in $V$ contains $m$ features. We take the $m$ features as the sample space $D = \{1,\cdots,m\}$. For each feature $s\in D$, let $f_{u,v}(s) = u_s\cdot v_s$, where $u_s$ is the $s$-th feature value of the vector $u$. Let $F = \{f_{u,v}: u,v\in V, u\not= v\}$. Thus $|F| < n^2/2$ since symmetry of cosine similarity. It is clear that the true average of $f_{u,v}$ equals to the cosine similarity between $u$ and $v$. Given the sampled features, the upper bound of $R_S(F)$ is 
 $$R_S(F) \leq \frac{\ell}{k}\sqrt{8\log |F|} < \frac{4\ell\sqrt{\log n}}{k},$$
-where $\ell = \max_{f\in F} \sum_{i=1}^k f(s_i)^2$. Since $F$ is finite, we can replace supreme by maximum. 
+where $\ell = \sqrt{\max_{f\in F} \sum_{i=1}^k f(s_i)^2}$. Since $F$ is finite, we can replace supreme by maximum. 
 
 The approximation algorithm works in an iterative mode. For each iteration, we sample some new features $s_i$'s among $D$ and aggregate the feature products given by $f_{u,v}(s_i)$ for each $f_{u,v}$ in $F$. Then we compute the error upper bound:
 $$\Delta = \frac{4\ell\sqrt{\log n}}{k} +\left(m+m\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{4\ell\sqrt{\log n}}{k}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}},$$
-where $\ell = \max_{f\in F} \sum_{i=1}^k f(s_i)^2$, and $k$ is the number of aggregated samples. 
+where $\ell = \sqrt{\max_{f\in F} \sum_{i=1}^k f(s_i)^2}$, and $k$ is the number of aggregated samples. 
 If $\Delta \leq \epsilon$, then we stop and return the averages $\frac{1}{k}\sum_{s_i\in S}f_{u,v}(s_i)$ for each pair $u, v$. Otherwise, we continue to the next round, where we will sample more features. If $\Delta \leq \epsilon$ can never be satisfied, at the end we will sample all the $m$ features and return the averages as the exact solution. Algorithm \ref{alg:csa} gives the pseudocode of our solution.
 
 It is clear to verify the correctness of our algorithm by Theorem \ref{thm:main} and Theorem \ref{thm2}.
@@ -187,7 +187,7 @@ The proof is essentially the same as the proof of Theorem \ref{thm:main}. We lea
 
 Our approximation algorithm works as follows. For each iteration, we sample some new features $s_i$'s among $D$, generate random walks $W_a$, $W_b$ from nodes $a$, $b$ given $s_i$ and aggregate $f_{a,b}(s_i)$ for each $f_{a,b}$ in $F$. Then we compute the error upper bound:
 $$\Delta = \frac{4\ell\sqrt{\log n}}{k} +\left(c+c\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + c\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{4\ell\sqrt{\log n}}{k}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}},$$
-where $\ell = \max_{f\in F} \sum_{i=1}^k f(s_i)^2$, and $k$ is the aggregated samples. 
+where $\ell = \sqrt{\max_{f\in F} \sum_{i=1}^k f(s_i)^2}$, and $k$ is the aggregated samples. 
 If $\Delta \leq \epsilon$, then we stop and return the averages $\frac{1}{k}\sum_{s_i\in S}f_{a,b}(s_i)$ for each pair $u, v$. Otherwise, we continue to the next round, where we will sample more features. If $\Delta \leq \epsilon$ can never be satisfied with a certain number of iterations, we return the approximated SimRank scores of node pairs, with the message that the input parameters $(\epsilon,\delta)$ cannot be satisfied by our algorithm.
 
 It is clear to verify the correctness of our algorithm by Theorem \ref{thm:new} and Theorem \ref{thm2}.
