@@ -73,6 +73,11 @@ Yasuhiro Fujiwara, Makoto Nakatsuji, Hiroaki Shiokawa, and Makoto Onizuka.
 \newblock In {\em Data Engineering (ICDE), 2013 IEEE 29th International
   Conference on}, pages 589--600. IEEE, 2013.
 
+\bibitem{Gil59}
+Edgar~N Gilbert.
+\newblock Random graphs.
+\newblock {\em The Annals of Mathematical Statistics}, 30(4):1141--1144, 1959.
+
 \bibitem{GIM99}
 Aristides Gionis, Piotr Indyk, Rajeev Motwani, et~al.
 \newblock Similarity search in high dimensions via hashing.
@@ -206,6 +211,11 @@ Vladimir Vapnik, Esther Levin, and Yann Le~Cun.
 Vladimir~Naumovich Vapnik and Vlamimir Vapnik.
 \newblock {\em Statistical learning theory}, volume~1.
 \newblock Wiley New York, 1998.
+
+\bibitem{WS98}
+Duncan~J Watts and Steven~H Strogatz.
+\newblock Collective dynamics of ‘small-world’networks.
+\newblock {\em nature}, 393(6684):440--442, 1998.
 
 \bibitem{Xia16}
 Zhihua Xia, Xinhui Wang, Xingming Sun, and Qian Wang.
