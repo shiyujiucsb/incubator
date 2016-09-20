@@ -53,7 +53,7 @@ $$\widetilde{Sim}(u,v) = \frac{1}{|S|} \sum_{s_i\in S} u_{s_i}\cdot v_{s_i}.$$
 That is, we can choose $k$ out of $m$ features at random, and compute the average of the $k$ sampled feature products as an approximation of the cosine similarity.
 Thanks to the recent advance in statistical learning theory (especially the results of Rademacher average), there are tight error bounds for this sampling method.
 \item SimRank between two nodes in the graph can be defined as
-$$s(a,b) = \sum_{t: (a,b) (x,x)} P[t]\cdot c^{L(t)},$$
+$$\textsf{SimRank}(a,b) = \sum_{t: (a,b) (x,x)} P[t]\cdot c^{L(t)},$$
 where $t$ is a pair of random walks with the same length $L(t)$, which lead the starting nodes $a$ and $b$ to meet at one node $x$, and $P[t]$ denotes the probability when $t$ is chosen. Hence SimRank can be treated as the true average of the random variable $c^{L(t)}$, where $t$ is taken over the space of all the pairs of random walks that start from the two nodes respectively. Thus similarly, we can sample over the random walk space and then use the sampled average as an approximation. Again, tight error bounds given by Rademacher average are also inherited.
 \end{itemize}
 
@@ -66,7 +66,7 @@ It is also possible to upper bound the Rademacher average by the state-of-art re
 
 \textbf{Our Contributions}. We are the first to give the approximation algorithms for APSS that can achieve upper bounds on maximum errors, and to show the upper bounds by using Rademacher average. We also evaluate our algorithms by using real-world data sets.
 
-The rest of this paper is organized as follows. Section \ref{sec:rw} discusses the related works. Section \ref{sec:pp} introduces the problem settings and reviews some technical background. Section \ref{sec:acs} approximates the cosine similarity based APSS and also gives the analysis on the upper bound of maximum errors. Section \ref{sec:asr} approximates the SimRank based APSS and also gives an upper bound on maximum errors. \ref{sec:eval} evaluates our algorithms and presents the experimental results.
+The rest of this paper is organized as follows. Section \ref{sec:rw} discusses the related works. Section \ref{sec:pp} introduces the problem settings and reviews some technical background. Section \ref{sec:acs} approximates the cosine similarity based APSS and also gives the analysis on the upper bound of maximum errors. Section \ref{sec:asr} approximates the SimRank based APSS and also gives an upper bound on maximum errors. Section \ref{sec:eval} evaluates our algorithms and presents the experimental results. Section \ref{sec:con} concludes this paper and discusses some possible future works.
 
 
 \section{Related Works}
@@ -402,6 +402,14 @@ Figure \ref{fig:twitter} and Figure \ref{fig:gplus} give the maximum approximati
 \end{figure}
 
 Figure \ref{fig:run_cos} and Figure \ref{fig:run_sr} give the running time of our algorithms on the real-world data sets given the sample sizes. Here we did not use any parallelism or detection techniques to implement our algorithms. Note that in APSS we need to compute for each pair of objects. The number of such pairs grows quadratically. As a result when the sample size is large, the computation can take a few hours. A good news is that since the computation of each pair is independent from each other, the approximation algorithms can be easily distributed over multiple cores.
+
+\section{Conclusion and Future Research}
+\label{sec:con}
+In this paper we have given two approximation algorithms (on cosine similarity and SimRank respectively) for all-pairs similarity search. 
+A rigorous analysis using Rademacher average has been presented.
+We also have evaluated their performance by experiments on both synthesized and real-world data sets. The results show that our algorithms can precisely approximate the similarities with acceptable time complexity and error probability. 
+
+We note that the upper bounds in this paper still have some space to improve. In the experiments our upper bounds are roughly 5 to 10 times the maximum absolute errors. In the proofs it is unclear whether the bounds we have used are the best possible. Hence the algorithms could be improved. Also it can be an interesting topic how to more efficiently use parallelism in APSS samplings.
 
 %\bibliographystyle{./IEEEtran}
 \bibliographystyle{plain}
