@@ -47,6 +47,14 @@ Ulrik Brandes.
 \newblock A faster algorithm for betweenness centrality*.
 \newblock {\em Journal of mathematical sociology}, 25(2):163--177, 2001.
 
+\bibitem{CJP08}
+Huanhuan Cao, Daxin Jiang, Jian Pei, Qi~He, Zhen Liao, Enhong Chen, and Hang
+  Li.
+\newblock Context-aware query suggestion by mining click-through and session
+  data.
+\newblock In {\em Proceedings of the 14th ACM SIGKDD international conference
+  on Knowledge discovery and data mining}, pages 875--883. ACM, 2008.
+
 \bibitem{CCK12}
 Liangliang Cao, Brian Cho, Hyun~Duk Kim, Zhen Li, Min-Hsuan Tsai, and Indranil
   Gupta.
@@ -55,11 +63,25 @@ Liangliang Cao, Brian Cho, Hyun~Duk Kim, Zhen Li, Min-Hsuan Tsai, and Indranil
   Streams and Heterogeneous Source Mining: Algorithms, Systems, Programming
   Models and Applications}, pages 28--35. ACM, 2012.
 
+\bibitem{CDG07}
+Carlos Castillo, Debora Donato, Aristides Gionis, Vanessa Murdock, and Fabrizio
+  Silvestri.
+\newblock Know your neighbors: Web spam detection using the web topology.
+\newblock In {\em Proceedings of the 30th annual international ACM SIGIR
+  conference on Research and development in information retrieval}, pages
+  423--430. ACM, 2007.
+
 \bibitem{Char02}
 Moses~S Charikar.
 \newblock Similarity estimation techniques from rounding algorithms.
 \newblock In {\em Proceedings of the thiry-fourth annual ACM symposium on
   Theory of computing}, pages 380--388. ACM, 2002.
+
+\bibitem{DHM04}
+Xin Dong, Alon Halevy, Jayant Madhavan, Ema Nemes, and Jun Zhang.
+\newblock Similarity search for web services.
+\newblock In {\em Proceedings of the Thirtieth international conference on Very
+  large data bases-Volume 30}, pages 372--383. VLDB Endowment, 2004.
 
 \bibitem{FKS03}
 Ronald Fagin, Ravi Kumar, and Dandapani Sivakumar.
@@ -138,6 +160,13 @@ Jimmy Lin.
   Research and development in information retrieval}, pages 155--162. ACM,
   2009.
 
+\bibitem{LCH06}
+Chao Liu, Chen Chen, Jiawei Han, and Philip~S Yu.
+\newblock Gplag: detection of software plagiarism by program dependence graph
+  analysis.
+\newblock In {\em Proceedings of the 12th ACM SIGKDD international conference
+  on Knowledge discovery and data mining}, pages 872--881. ACM, 2006.
+
 \bibitem{M89}
 Colin McDiarmid.
 \newblock On the method of bounded differences.
@@ -154,6 +183,11 @@ Luca Oneto, Alessandro Ghio, Davide Anguita, and Sandro Ridella.
 \newblock An improved analysis of the rademacher data-dependent bound using its
   self bounding property.
 \newblock {\em Neural Networks}, 44:107--111, 2013.
+
+\bibitem{RV97}
+Paul Resnick and Hal~R Varian.
+\newblock Recommender systems.
+\newblock {\em Communications of the ACM}, 40(3):56--58, 1997.
 
 \bibitem{RK14}
 Matteo Riondato and Evgenios~M Kornaropoulos.
@@ -178,6 +212,12 @@ Matteo Riondato and Eli Upfal.
 \newblock Abra: Approximating betweenness centrality in static and dynamic
   graphs with rademacher averages.
 \newblock {\em arXiv preprint arXiv:1602.05866}, 2016.
+
+\bibitem{SKK01}
+Badrul Sarwar, George Karypis, Joseph Konstan, and John Riedl.
+\newblock Item-based collaborative filtering recommendation algorithms.
+\newblock In {\em Proceedings of the 10th international conference on World
+  Wide Web}, pages 285--295. ACM, 2001.
 
 \bibitem{SGM00}
 Alexander Strehl, Joydeep Ghosh, and Raymond Mooney.

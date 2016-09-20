@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=latex 2016.9.6)  19 SEP 2016 00:23
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=latex 2016.9.6)  19 SEP 2016 18:51
 entering extended mode
 **./cos_sim_apprx.tex
 (cos_sim_apprx.tex
@@ -448,36 +448,44 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 \c@theorem=\count129
 \c@lemma=\count130
 \c@corollary=\count131
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 47.
+
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\omscmr.fd"
+File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 47.
+ [1
+
+]
 Missing character: There is no â in font cmr10!
 Missing character: There is no € in font cmr10!
 Missing character: There is no “ in font cmr10!
- [1
-
-] [2] [3] [4] [5]
+ [2] [3] [4] [5] [6] [7]
 File: cos_normal_apprx_error.eps Graphic file (type eps)
  <cos_normal_apprx_error.eps>
 File: cos_uniform_apprx_error.eps Graphic file (type eps)
 
-<cos_uniform_apprx_error.eps> [6] [7]
+<cos_uniform_apprx_error.eps> [8]
 File: simrank_rg_apprx_error.eps Graphic file (type eps)
  <simrank_rg_apprx_error.eps>
 File: simrank_sw_apprx_error.eps Graphic file (type eps)
- <simrank_sw_apprx_error.eps> (cos_sim_apprx.bbl
-[8] [9]
+ <simrank_sw_apprx_error.eps> (cos_sim_apprx.bbl [9]
+[10] [11]
 Missing character: There is no â in font cmr10!
 Missing character: There is no € in font cmr10!
 Missing character: There is no ˜ in font cmr10!
 Missing character: There is no â in font cmr10!
 Missing character: There is no € in font cmr10!
 Missing character: There is no ™ in font cmr10!
-) (appendix.tex [10] [11] [12] [13] [14]) [15] (cos_sim_apprx.aux) ) 
+) (appendix.tex [12] [13] [14] [15] [16]) [17] (cos_sim_apprx.aux) ) 
 Here is how much of TeX's memory you used:
- 12105 strings out of 493335
- 238270 string characters out of 3136699
- 287319 words of memory out of 3000000
- 15407 multiletter control sequences out of 15000+200000
- 12754 words of font info for 49 fonts, out of 3000000 for 9000
+ 12136 strings out of 493335
+ 238681 string characters out of 3136699
+ 287377 words of memory out of 3000000
+ 15433 multiletter control sequences out of 15000+200000
+ 13361 words of font info for 51 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  55i,12n,54p,1644b,323s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on cos_sim_apprx.dvi (15 pages, 78260 bytes).
+Output written on cos_sim_apprx.dvi (17 pages, 88988 bytes).

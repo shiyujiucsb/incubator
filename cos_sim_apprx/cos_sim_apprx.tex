@@ -31,15 +31,52 @@
 \newtheorem{corollary}{Corollary}
 \theoremstyle{plain}
 
+\begin{abstract}
+All-pairs similarity search (APSS) has abundant applications in many fields such as collaborative filtering, recommendations, search query suggestions, spam detection, etc.
+This paper proposes two approximation algorithms for cosine similarity based APSS and SimRank based APSS respectively. 
+We have given the upper bounds of the approximation errors for the worst case by using Rademacher average.
+To the best of our knowledge, we are the first to apply Rademacher average to bound the errors in APSS approximation problems.
+We also evaluate our algorithms by experiments to verify that our upper bounds are tight enough for practical use.
+\end{abstract}
+
 \section{Introduction}
-All-pairs similarity search (APSS) has received extensive research interest recently \cite{BMS07,Xia16,ATY13,TAJY14}. To improve performance, many approximation approaches have been proposed \cite{GIM99,FKS03,IM98,Char02}. This paper considers two approximation methods for cosine similarity based search \cite{SGM00,Xia16,ATY13,TAJY14}, and SimRank based search \cite{JW02,LH10,FNS13,KMK14} respectively. The approximation error of each our algorithm is upper bounded by using Rademacher average \cite{BM02,Mohri09,BBM05}.
+All-pairs similarity search (APSS) has received extensive research interest recently \cite{BMS07,Xia16,ATY13,TAJY14}. Collaborative filtering \cite{SKK01}, similarity-based recommendations \cite{RV97}, search query suggestions \cite{CJP08}, spam and plagiarism detection \cite{CDG07,LCH06} all find APSS useful in practice. To improve performance, many approximation approaches have been proposed \cite{GIM99,FKS03,IM98,Char02}. Hence the computation \cite{BMS07,DHM04,Xia16,ATY13,TAJY14} and approximation \cite{GIM99,FKS03,IM98,Char02} of the all-pairs similarities have been popular in research for more than ten years. 
+
+This paper considers two approximation methods for cosine similarity based search \cite{SGM00,Xia16,ATY13,TAJY14}, and SimRank based search \cite{JW02,LH10,FNS13,KMK14} respectively. Our solution idea is to treat the cosine similarity or SimRank between two vectors as a true average over random variables, and then we can use sampled average to approximate the true average. We explain the details as follows:
+\begin{itemize}
+\item Cosine similarity between two vectors, each of which contains $m$ features, is defined as
+$$Sim(u,v) = \frac{1}{||u||\cdot||v||} \sum_{i=1}^m u_i\cdot v_i,$$
+where $||\cdot||$ denotes 2-norm and $u_i$ is the $i$-th component (feature) value. If we normalize each vector to make their norms all equal to $\sqrt{m}$, then cosine similarity is just the true average of the $m$ feature products between two vectors:
+$$Sim(u,v) = \frac{1}{m} \sum_{i=1}^m u_i\cdot v_i.$$
+Suppose $m$ is large, e.g., over 1K. Then it is time consuming to traverse all the $m$ feature pairs and do the multiplications. A straightforward method to approximate the true average is by using the sampled average
+$$\widetilde{Sim}(u,v) = \frac{1}{|S|} \sum_{s_i\in S} u_{s_i}\cdot v_{s_i}.$$
+That is, we can choose $k$ out of $m$ features at random, and compute the average of the $k$ sampled feature products as an approximation of the cosine similarity.
+Thanks to the recent advance in statistical learning theory (especially the results of Rademacher average), there are tight error bounds for this sampling method.
+\item SimRank between two nodes in the graph can be defined as
+$$s(a,b) = \sum_{t: (a,b) (x,x)} P[t]\cdot c^{L(t)},$$
+where $t$ is a pair of random walks with the same length $L(t)$, which lead the starting nodes $a$ and $b$ to meet at one node $x$, and $P[t]$ denotes the probability when $t$ is chosen. Hence SimRank can be treated as the true average of the random variable $c^{L(t)}$, where $t$ is taken over the space of all the pairs of random walks that start from the two nodes respectively. Thus similarly, we can sample over the random walk space and then use the sampled average as an approximation. Again, tight error bounds given by Rademacher average are also inherited.
+\end{itemize}
+
+The approximation error of each our algorithm can be upper bounded by using Rademacher average \cite{BM02,Mohri09,BBM05}. We can treat the similarity approximation as a learning problem over large scaled data set. In the analysis, we want to upper bound the approximation error for the worst case, i.e., to bound the maximum error $\overline{E}$ among all pairs:
+$$\overline{E} = \max_{u\not =v} |\widetilde{Sim}(u,v) - Sim(u,v)|.$$
+Rademacher average does an excellent job on how to bound such maximum error \cite{RU15,RU16}. The key result we use in this paper is that with probability at least $1-\delta$,
+$$\overline{E} \leq R + c\left(1+\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + \sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{8R}{c}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}},$$
+where $R$ denotes the Rademacher average of the data set, and $k$ is the number of samples, and $c$ is the number of features for cosine similarity, or the constant between 0 and 1 for SimRank.
+It is also possible to upper bound the Rademacher average by the state-of-art results \cite{AGO14,RU15,RU16}. Thus we can find an upper bound of the worst errors for our approximation algorithms.
+
+\textbf{Our Contributions}. We are the first to give the approximation algorithms for APSS that can achieve upper bounds on maximum errors, and to show the upper bounds by using Rademacher average. 
+
+The rest of this paper is organized as follows. Section \ref{sec:rw} discusses the related works. Section \ref{sec:pp} introduces the problem settings and reviews some technical background. Section \ref{sec:acs} approximates the cosine similarity based APSS and also gives the analysis on the upper bound of maximum errors. Section \ref{sec:asr} approximates the SimRank based APSS and also gives an upper bound on maximum errors. \ref{sec:eval} evaluates our algorithms and presents the experimental results.
+
 
 \section{Related Works}
+\label{sec:rw}
 All-pairs similarity search (APSS) is recently a popular research topic in the community of information retrieval \cite{BMS07,Xia16,ATY13,TAJY14}. Given a big set of objects, the goal of APSS is to efficiently compute (or approximate) the similarities between each pair of objects. Many similarity measures have been proposed \cite{SGM00}, e.g., Cosine Similarity \cite{TP07}, SimRank \cite{JW02}, Jaccard Index \cite{HHH89}, Metric Distance \cite{SGM00}, Pearson Correlation \cite{BCY09}, etc. For similarity search, Cosine Similarity and SimRank are very popular (\cite{TP07,Xia16,ATY13,TAJY14} for Cosine, and \cite{LH10,FNS13,KMK14,YM15} for SimRank). A major challenge of APSS is the large volume of computation: given $n$ objects, without any assumption on the similarity distribution (e.g., the similarity matrix is sparse), the time complexity is at least $O(n^2)$. To compute more efficiently, the state-of-art research works often use parallelism \cite{CCK12,HFL10} and dissimilarity detection \cite{ATY13,TAJY14}. If only approximations are needed, how to efficiently sample with negligible error for similarity search is another research focus \cite{GIM99,FKS03,IM98,Char02}. This paper focuses on the approximation problem.
 
 We may treat the similarity approximation as a learning problem over large scaled data, and we need to upper bound the learning error for the worst case. In statistical learning theory, such upper bounds are usually called risk bounds \cite{Vap13}. There are two classical methods to compute the risk bounds: by Vapnik–Chervonenkis (VC) dimension \cite{VLL94,Vap98,Vap13} and by Rademacher average \cite{Mohri09,BM02,BBM05}. Many approximation algorithms that use these two techniques have been proposed \cite{RK14,RK16,RU15,RU16}. Riondato and Kornaropoulos \cite{RK14,RK16} proposed algorithms that use VC dimension to upper bound the sample size that is sufficient to approximate the betweenness centralities \cite{Bran01} of all nodes in a graph with guaranteed error bounds. One limitation of the VC-based algorithms is that the upper bounds of some characteristic quantities (e.g., the maximum length of any shortest path) are needed \cite{RK14,RK16,RU16}. But such bounds are not always available. One year later, Riondato and Upfal used Rademacher average to approximate the frequent itemsets \cite{RU15} and betweenness centralities \cite{RU16}. They also found that by using Rademacher average, we can avoid the aforementioned limitation of VC-based solutions. It has been proved that Rademacher average can be applied to various approximation problems, which are out of the scope of classical learning framework. This paper basically follows this idea. To the best of our knowledge, there is no research work connecting similarity approximation with Rademacher average. We attempt to fill this void.
 
 \section{Problem Formulation and Preliminaries}
+\label{sec:pp}
 \subsection{Cosine Similarity}
 We consider the cosine similarity based all-pairs similarity search.
 Suppose there are $n$ vectors (each vector can represent a user profile or a web page). Each vector contains $m$ non-negative features. Define the cosine similarity between two vectors $u$ and $v$ as
@@ -98,6 +135,7 @@ By the above two theorems, we can bound our approximation error even for the wor
 
 
 \section{Approximating Cosine Similarities}
+\label{sec:acs}
 The approximation algorithm takes as input a collection of $n$ vectors $V$ and two parameters $(\epsilon, \delta)$ whose values are between 0 and 1. The algorithm outputs a set $C = \{\tilde{S}(u,v): u,v \in V, u\not= v\}$, where $\tilde{S}(u,v)$ is the $(\epsilon, \delta)$- approximation of cosine similarity between $u$ and $v$, i.e., with probability at least $1-\delta$, the worst approximation error in $C$ is at most $\epsilon$. Each vector in $V$ contains $m$ features. We take the $m$ features as the sample space $D = \{1,\cdots,m\}$. For each feature $s\in D$, let $f_{u,v}(s) = u_s\cdot v_s$, where $u_s$ is the $s$-th feature value of the vector $u$. Let $F = \{f_{u,v}: u,v\in V, u\not= v\}$. Thus $|F| < n^2/2$ since symmetry of cosine similarity. It is clear that the true average of $f_{u,v}$ equals to the cosine similarity between $u$ and $v$. Given the sampled features, the upper bound of $R_S(F)$ is 
 $$R_S(F) \leq \frac{\ell}{k}\sqrt{8\log |F|} < \frac{4\ell\sqrt{\log n}}{k},$$
 where $\ell = \sqrt{\max_{f\in F} \sum_{i=1}^k f(s_i)^2}$. Since $F$ is finite, we can replace supreme by maximum. 
@@ -148,6 +186,7 @@ $$\Delta = \frac{4\ell\sqrt{\log n}}{k} +\hat{m}\left(1+\sqrt{\frac{8}{k}\log \f
 We use experiments (in Section \ref{sec:eval}) to show that the improvement of the variant above is significant. 
 
 \section{Approximating SimRank}
+\label{sec:asr}
 We approximate SimRank scores on the nodes in the digraph $G=(V,E)$. 
 The basic idea is similar to the case of cosine similarity approximation, but the sample space $D$ is changed to the $2T$-dimensional manifold $[0,1]^{2T}$, where $[0,1]$ is the interval of real numbers between 0 and 1, and $F$ is now defined as
 $$F = \{f_{a,b} : a,b\in V, a\not= b\},$$
@@ -244,7 +283,7 @@ It is clear to verify the correctness of our algorithm by Theorem \ref{thm:new} 
 In this section we evaluate our algorithms.
 
 \subsection{Setup}
-We implemented our algorithms by Python 3.4.3 and ran the programs on a Fedora 20 (Linux) cluster. Every measurement was averaged over 100 test cases.
+We implemented our algorithms by Python 3.4.3 and ran the programs on a Fedora 20 (Linux) cluster. Every measurement was averaged over 100 test cases, i.e., we ran our algorithms on 100 random vector collections or 100 random graphs and then computed the average.
 
 For the cosine similarity approximation, we have 100 vectors with 1000 features. We considered two distributions of the feature values: uniform distribution and normal distribution. For uniform distribution, each feature value uniformly distributes over the interval $[0,1]$. For normal distribution, each feature value is generated by $|X|$, where $X$ is a random variable of standard normal distribution $\mathcal{N}(0,1)$. At last, each vector was normalized with norm $\sqrt{m}$. We set the error probability $\delta = 0.0001$.
 
@@ -269,9 +308,10 @@ For the SimRank approximation, we have 100 nodes in total. We implemented two gr
 \end{minipage}
 \end{figure}
 
+Figure \ref{fig:cnae} and Figure \ref{fig:cuae} present the approximation errors and upper bound given by Algorithm \ref{alg:csa}.
 Here \textsf{MaxError} denotes the maximum absolute error among all the vector pairs, i.e.,
 $$\textsf{MaxError} = \max_{u,v\in V,u\not= v} |\widetilde{Sim}(u,v) - Sim(u,v)|,$$
-where $\widetilde{Sim}(u,v)$ is the approximated similarity between $u$ and $v$ given by our algorithms. The upper bound \textsf{Delta} is the $\Delta$ given in Algorithm \ref{alg:csa}, and the improved bound is given in Section \ref{sec:imprb}.
+where $\widetilde{Sim}(u,v)$ is the approximated similarity between $u$ and $v$ given by our algorithms. The upper bound \textsf{Delta} is the $\Delta$ given in Algorithm \ref{alg:csa}, and the improved bound is given in Section \ref{sec:imprb}. For the improved bound, we observe that with overwhelming probability, each feature product between any two vectors is less than 20.0 when $m=1000$. Hence we choose the adjusted parameter $\hat{m} = 20.0$. See Section \ref{sec:imprb} for details. 
 For both figures, when more samples are drawn, the maximum absolute errors and upper bounds decrease. Also our improved upper bounds are significantly tighter than the bounds by $m$, but they are still much larger than the maximum absolute errors. Hence our theoretical bounds are still quite loose. However, our improved bounds can be sufficient for practical use. For uniform distribution, by 200 samplings, we can guarantee that the maximum absolute error among all the vector pairs is less than 9.0 with probability at least 99.99\%. Note that the cosine similarities can be between 0 and $m=1000$. Thus 9.0 is relatively small. Similarly for normal distribution, by 190 samplings we can guarantee that with probability at least 99.99\%, the maximum absolute error is less than 10.0.
 
 \begin{figure}[!t]
@@ -291,8 +331,9 @@ For both figures, when more samples are drawn, the maximum absolute errors and u
 \end{minipage}
 \end{figure}
 
+Figure \ref{fig:rgae} and Figure \ref{fig:swae} present the approximation errors and upper bound given by Algorithm \ref{alg:sra}.
 Here the upper bound \textsf{Delta} is given in Algorithm \ref{alg:sra}. \textsf{MaxError} is same as before. 
-For both figures, when more samples are drawn, the maximum absolute errors and upper bounds decrease. Note that even though our bounds are still quite loose compared to the maximum absolute errors, they can be practically used. For random graph model, by taking 10000 samples, we can guarantee that the maximum absolute error among all the node pairs is less than 0.062 with probability at least 99.99\%. For small-world model, by taking 
+For both figures, when more samples are drawn, the maximum absolute errors and upper bounds decrease. Note that even though our bounds are still quite loose compared to the maximum absolute errors, they can be practically used. For random graph model, by taking 10000 samples, we can guarantee that the maximum absolute error among all the node pairs is less than 0.062 with probability at least 99.99\%. For small-world model, by taking 10000 samples, we can guarantee that the maximum absolute error is less than 0.051 with probability at least 99.99\%.
 
 %\bibliographystyle{./IEEEtran}
 \bibliographystyle{plain}
