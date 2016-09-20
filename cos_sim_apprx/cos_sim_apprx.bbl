@@ -144,6 +144,11 @@ Mitsuru Kusumoto, Takanori Maehara, and Ken-ichi Kawarabayashi.
 \newblock In {\em Proceedings of the 2014 ACM SIGMOD international conference
   on Management of data}, pages 325--336. ACM, 2014.
 
+\bibitem{LK15}
+Jure Leskovec and Andrej Krevl.
+\newblock Snap datasets: Stanford large network dataset collection.
+\newblock {\em Stanford University}, 2015.
+
 \bibitem{LH10}
 Cuiping Li, Jiawei Han, Guoming He, Xin Jin, Yizhou Sun, Yintao Yu, and Tianyi
   Wu.
