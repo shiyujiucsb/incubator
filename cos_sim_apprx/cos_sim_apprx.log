@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=latex 2016.9.6)  20 SEP 2016 03:34
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=latex 2016.9.6)  21 SEP 2016 02:46
 entering extended mode
 **./cos_sim_apprx.tex
 (cos_sim_apprx.tex
@@ -466,7 +466,7 @@ File: cos_normal_apprx_error.eps Graphic file (type eps)
 
 <cos_normal_apprx_error.eps>
 File: cos_uniform_apprx_error.eps Graphic file (type eps)
- <cos_uniform_apprx_error.eps>
+ <cos_uniform_apprx_error.eps> [9]
 File: cos_arxiv_apprx_error.eps Graphic file (type eps)
  <cos_arxiv_apprx_error.eps>
 File: cos_email_apprx_error.eps Graphic file (type eps)
@@ -475,16 +475,16 @@ File: simrank_rg_apprx_error.eps Graphic file (type eps)
 
 <simrank_rg_apprx_error.eps>
 File: simrank_sw_apprx_error.eps Graphic file (type eps)
- <simrank_sw_apprx_error.eps> [9]
+ <simrank_sw_apprx_error.eps>
 File: simrank_twitter_apprx_error.eps Graphic file (type eps)
  <simrank_twitter_apprx_error.eps>
 File: simrank_gplus_apprx_error.eps Graphic file (type eps)
 
-<simrank_gplus_apprx_error.eps> [10]
+<simrank_gplus_apprx_error.eps>
 File: cos_runtime.eps Graphic file (type eps)
  <cos_runtime.eps>
 File: simrank_runtime.eps Graphic file (type eps)
- <simrank_runtime.eps> (cos_sim_apprx.bbl [11] [12] [13]
+ <simrank_runtime.eps> [10] (cos_sim_apprx.bbl [11] [12] [13]
 Missing character: There is no â in font cmr10!
 Missing character: There is no € in font cmr10!
 Missing character: There is no ˜ in font cmr10!
@@ -496,10 +496,10 @@ Missing character: There is no ™ in font cmr10!
 Here is how much of TeX's memory you used:
  12158 strings out of 493335
  239076 string characters out of 3136699
- 288446 words of memory out of 3000000
+ 285446 words of memory out of 3000000
  15448 multiletter control sequences out of 15000+200000
  13529 words of font info for 52 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  55i,12n,54p,1644b,323s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on cos_sim_apprx.dvi (19 pages, 95000 bytes).
+Output written on cos_sim_apprx.dvi (19 pages, 95504 bytes).

@@ -34,13 +34,13 @@
 \begin{abstract}
 All-pairs similarity search (APSS) has abundant applications in many fields such as collaborative filtering, recommendations, search query suggestions, spam detection, etc.
 This paper proposes two approximation algorithms for cosine similarity based APSS and SimRank based APSS respectively. 
-We have given the upper bounds of the approximation errors for the worst case by using Rademacher average.
+We give the upper bounds of the approximation errors for the worst case by using Rademacher average.
 To the best of our knowledge, we are the first to apply Rademacher average to bound the errors in APSS approximation problems.
 We also evaluate our algorithms by experiments on real-world data sets to verify that our upper bounds are tight enough for practical use.
 \end{abstract}
 
 \section{Introduction}
-All-pairs similarity search (APSS) has received extensive research interest recently \cite{BMS07,Xia16,ATY13,TAJY14}. Collaborative filtering \cite{SKK01}, similarity-based recommendations \cite{RV97}, search query suggestions \cite{CJP08}, spam and plagiarism detection \cite{CDG07,LCH06} all find APSS useful in practice. To improve performance, many approximation approaches have been proposed \cite{GIM99,FKS03,IM98,Char02}. Hence the computation \cite{BMS07,DHM04,Xia16,ATY13,TAJY14} and approximation \cite{GIM99,FKS03,IM98,Char02} of the all-pairs similarities have been popular in research for more than ten years. 
+All-pairs similarity search (APSS) has received extensive research interest recently \cite{BMS07,Xia16,ATY13,TAJY14}. Collaborative filtering \cite{SKK01}, similarity-based recommendations \cite{RV97}, search query suggestions \cite{CJP08}, spam and plagiarism detection \cite{CDG07,LCH06} all find APSS useful in practice. However, it is time consuming to do an APSS since the time complexity grows quadratically with the problem scale \cite{BMS07,ATY13,TAJY14}. To improve performance, many approximation approaches have been proposed \cite{GIM99,FKS03,IM98,Char02}. Hence the computation \cite{BMS07,DHM04,Xia16,ATY13,TAJY14} and approximation \cite{GIM99,FKS03,IM98,Char02} of the all-pairs similarities have been popular in research for more than ten years. 
 
 This paper considers two approximation methods for cosine similarity based search \cite{SGM00,Xia16,ATY13,TAJY14}, and SimRank based search \cite{JW02,LH10,FNS13,KMK14} respectively. Our solution idea is to treat the cosine similarity or SimRank between two vectors as a true average over random variables, and then we can use sampled average to approximate the true average. We explain the details as follows:
 \begin{itemize}
@@ -49,11 +49,12 @@ $$Sim(u,v) = \frac{1}{||u||\cdot||v||} \sum_{i=1}^m u_i\cdot v_i,$$
 where $||\cdot||$ denotes 2-norm and $u_i$ is the $i$-th component (feature) value. If we normalize each vector to make their norms all equal to $\sqrt{m}$, then cosine similarity is just the true average of the $m$ feature products between two vectors:
 $$Sim(u,v) = \frac{1}{m} \sum_{i=1}^m u_i\cdot v_i.$$
 Suppose $m$ is large, e.g., over 1K. Then it is time consuming to traverse all the $m$ feature pairs and do the multiplications. A straightforward method to approximate the true average is by using the sampled average
-$$\widetilde{Sim}(u,v) = \frac{1}{|S|} \sum_{s_i\in S} u_{s_i}\cdot v_{s_i}.$$
+$$\widetilde{Sim}(u,v) = \frac{1}{|S|} \sum_{s_i\in S} u_{s_i}\cdot v_{s_i},$$
+where $S$ is the set of sampled features. 
 That is, we can choose $k$ out of $m$ features at random, and compute the average of the $k$ sampled feature products as an approximation of the cosine similarity.
 Thanks to the recent advance in statistical learning theory (especially the results of Rademacher average), there are tight error bounds for this sampling method.
 \item SimRank between two nodes in the graph can be defined as
-$$\textsf{SimRank}(a,b) = \sum_{t: (a,b) (x,x)} P[t]\cdot c^{L(t)},$$
+$$\textsf{SimRank}(a,b) = \sum_{t: (a,b) \rightsquigarrow (x,x)} P[t]\cdot c^{L(t)},$$
 where $t$ is a pair of random walks with the same length $L(t)$, which lead the starting nodes $a$ and $b$ to meet at one node $x$, and $P[t]$ denotes the probability when $t$ is chosen. Hence SimRank can be treated as the true average of the random variable $c^{L(t)}$, where $t$ is taken over the space of all the pairs of random walks that start from the two nodes respectively. Thus similarly, we can sample over the random walk space and then use the sampled average as an approximation. Again, tight error bounds given by Rademacher average are also inherited.
 \end{itemize}
 
@@ -93,7 +94,7 @@ SimRank \cite{JW02} is a popular measure of the similarity between two nodes in 
 $$s(a,b) = \frac{c}{|I(a)|\cdot|I(b)|}\sum_{i\in I(a)}\sum_{j\in I(b)}s(i,j),$$
 where $c$ is a constant in $(0,1)$ and $I(a)$ denotes the in-neighbors of $a$. If there is an edge from $a$ to $b$, then $a$ is an in-neighbor of $b$. 
 An important fact is that SimRank can be equivalently built upon Random Surfer-Pairs Model \cite{JW02}. That is, $s(a,b)$ can also be written as follows:
-$$s(a,b) = \sum_{t: (a,b) (x,x)} P[t]\cdot c^{L(t)},$$
+$$s(a,b) = \sum_{t: (a,b) \rightsquigarrow (x,x)} P[t]\cdot c^{L(t)},$$
 where $t$ is a pair of random walks with the same number of steps, which lead $a$ and $b$ to meet at one node $x$, and $P[t]$ denotes the probability when $t$ is chosen, and $L(t)$ denotes the number of steps of each walk in $t$. Here we take random walks from the reversed graph, in which each edge is reversed compared with the original graph. A random walk works as follows: in the tour at any node, which has $k$ out-edges, we take one of the $k$ edge with equal probability $1/k$ as our next step. Note that as the length of random walk grows, its contribution to $s(a,b)$ decreases exponentially. Hence in practice, we only need to consider relatively short walks, e.g., with length no more than $T$.
 
 \subsection{Rademacher Average}
@@ -111,7 +112,7 @@ $$U_S(F) = \max_{f\in F} [ A_S(f) - A_D(f) ].$$
 Define the \emph{Rademacher average} \cite{Mohri09,BM02,Oneto13} of $F$ given $S$ as
 \newcommand{\E}{\mathbb{E}}
 $$R_S(F) = \E_\sigma \left[\sup_{f\in F} \frac{2}{k}\sum_{i=1}^k \sigma_i f(s_i) \right],$$
-where each $\sigma_i$ is a random variable uniformly distributed over $\{-1, 1\}$, and the mean $\E_\sigma$ takes randomness over all the $\sigma_i$'s conditionally on $S$. Again, one can replace supreme by maximum.
+where each $\sigma_i$ is a random variable uniformly distributed over $\{-1, 1\}$, and the mean $\E_\sigma$ takes randomness over all the $\sigma_i$'s conditionally on $S$. Again, one can replace supreme by maximum if $F$ is finite.
 
 The main motivation of our algorithm is that the difference between true average and sampled average is upper bounded by the Rademacher average as follows.
 We leave the proofs to the Appendix.
@@ -144,7 +145,7 @@ where $\ell = \sqrt{\max_{f\in F} \sum_{i=1}^k f(s_i)^2}$. Since $F$ is finite, 
 The approximation algorithm works in an iterative mode. For each iteration, we sample some new features $s_i$'s among $D$ and aggregate the feature products given by $f_{u,v}(s_i)$ for each $f_{u,v}$ in $F$. Then we compute the error upper bound:
 $$\Delta = \frac{4\ell\sqrt{\log n}}{k} +\left(m+m\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{mk}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}},$$
 where $\ell = \sqrt{\max_{f\in F} \sum_{i=1}^k f(s_i)^2}$, and $k$ is the number of aggregated samples. 
-If $\Delta \leq \epsilon$, then we stop and return the averages $\frac{1}{k}\sum_{s_i\in S}f_{u,v}(s_i)$ for each pair $u, v$. Otherwise, we continue to the next round, where we will sample more features. If $\Delta \leq \epsilon$ can never be satisfied, at the end we will sample all the $m$ features and return the averages as the exact solution. Algorithm \ref{alg:csa} gives the pseudocode of our solution.
+If $\Delta \leq \epsilon$, then we stop and return the averages $\frac{1}{k}\sum_{s_i\in S}f_{u,v}(s_i)$ for each pair $u, v$. Otherwise, we continue to the next round, where we will sample more features. If $\Delta \leq \epsilon$ can never be satisfied, at the end we will sample all the $m$ features and return the averages as the exact solution. Algorithm \ref{alg:csa} gives the pseudocode of our solution. We use progressive approximation, i.e., for each round, the next sample size $k'$ is larger than the previous size $k$. The algorithm stops once the upper bound $\epsilon$ can be achieved.
 
 It is clear to verify the correctness of our algorithm by Theorem \ref{thm:main} and Theorem \ref{thm2}.
 
@@ -159,8 +160,8 @@ It is clear to verify the correctness of our algorithm by Theorem \ref{thm:main}
 \State $k \gets 0$;
 \State $S \gets \emptyset$;
 \State $S(u,v) \gets 0$ for each $u, v \in V$ s.t. $u\not= v$;
-\While {$k \leq m$}
-	\State $k' \gets \mathsf{next-sample-size}(k)$;
+\While {$k < m$}
+	\State $k' \gets \textsf{next-sample-size}(k)$;
 	\For {$i$ from $k$ to $k'-1$}
 		\State Uniformly sample a feature $s$ from $U\setminus S$;
 		\State $S(u,v) \gets S(u,v)+u[s]\cdot v[s]$;
@@ -168,7 +169,7 @@ It is clear to verify the correctness of our algorithm by Theorem \ref{thm:main}
 	\EndFor
 	\State $\Delta \gets \frac{4\ell\sqrt{\log n}}{k} +\left(m+m\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{mk}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}$;
 	\If {$\Delta \leq \epsilon$}
-		\State break the while loop;
+		\State break the {\bf while} loop;
 	\EndIf
 \EndWhile
 \State $\mathsf{S} \gets \{S(u,v)/k : u,v\in V, u\not=v\}$.
@@ -252,7 +253,7 @@ It is clear to verify the correctness of our algorithm by Theorem \ref{thm:new} 
 \State $k \gets 0$;
 \State $S(u,v) \gets 0$ for each $u, v \in V$ s.t. $u\not= v$;
 \For {$\mathsf{count}$ from 1 to $R$}
-	\State $k' \gets \mathsf{next-sample-size}(k)$;
+	\State $k' \gets \textsf{next-sample-size}(k)$;
 	\For {$i$ from $k$ to $k'-1$}
 		\State Uniformly sample a feature $s$ from $[0,1]^{2T}$;
 		\For {each $a,b \in V\times V$ s.t. $a\not= b$}
@@ -267,7 +268,7 @@ It is clear to verify the correctness of our algorithm by Theorem \ref{thm:new} 
 	\EndFor
 	\State $\Delta \gets \frac{4\ell\sqrt{\log n}}{k} +\left(c+c\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + c\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{ck}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}$;
 	\If {$\Delta \leq \epsilon$}
-		\State break the while loop;
+		\State break the {\bf for} loop;
 	\EndIf
 \EndFor
 \State $\mathsf{S} \gets \{S(u,v)/k : u,v\in V, u\not=v\}$.
