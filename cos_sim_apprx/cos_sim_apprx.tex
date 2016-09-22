@@ -98,7 +98,7 @@ $$s(a,b) = \sum_{t: (a,b) \rightsquigarrow (x,x)} P[t]\cdot c^{L(t)},$$
 where $t$ is a pair of random walks with the same number of steps, which lead $a$ and $b$ to meet at one node $x$, and $P[t]$ denotes the probability when $t$ is chosen, and $L(t)$ denotes the number of steps of each walk in $t$. Here we take random walks from the reversed graph, in which each edge is reversed compared with the original graph. A random walk works as follows: in the tour at any node, which has $k$ out-edges, we take one of the $k$ edge with equal probability $1/k$ as our next step. Note that as the length of random walk grows, its contribution to $s(a,b)$ decreases exponentially. Hence in practice, we only need to consider relatively short walks, e.g., with length no more than $T$.
 
 \subsection{Rademacher Average}
-This section proposes our approximation algorithm and its analysis.
+This section will review some key results related to Rademacher Average. 
 Suppose we want to compute the cosine similarities between a fixed vector $u$ and other vectors $v_1$, $v_2$, $\cdots$, $v_n$. We take the $m$ features as the sample space $S$:
 $$S = \{s_1, \cdots, s_k\} \subseteq D$$
 where $k$ is the number of samples we take, and $D$ is the feature space: $D = \{1,2,\cdots,m\}$.
@@ -109,6 +109,15 @@ Define the \emph{uniform deviation} \cite{Oneto13} of $F$ given $S$ as
 $$U_S(F) = \sup_{f\in F} [ A_S(f) - A_D(f) ].$$
 Note that if $F$ is a finite set (in this paper we will see this is true), supreme can be replaced by maximum:
 $$U_S(F) = \max_{f\in F} [ A_S(f) - A_D(f) ].$$
+For the case when $F$ is finite, we have the upper bound of the approximation error in the worst case as follows.
+\begin{theorem}
+\label{thm:finite}
+If $F$ is finite, then for any $\delta > 0$, with probability at least $1-\delta$,
+$$\sup_{f\in F} | A_S(f) - A_D(f) | \leq m\sqrt{\frac{\log(2|F|) + \log(1/\delta)}{2k}}.$$ 
+\end{theorem}
+We leave the proof of Theorem \ref{thm:finite} to the Appendix.
+
+However if $F$ is not necessarily infinite, the above bound cannot apply. We can use Rademacher average to deal with the general case. 
 Define the \emph{Rademacher average} \cite{Mohri09,BM02,Oneto13} of $F$ given $S$ as
 \newcommand{\E}{\mathbb{E}}
 $$R_S(F) = \E_\sigma \left[\sup_{f\in F} \frac{2}{k}\sum_{i=1}^k \sigma_i f(s_i) \right],$$
@@ -137,17 +146,18 @@ By the above two theorems, we can bound our approximation error even for the wor
 
 \section{Approximating Cosine Similarities}
 \label{sec:acs}
+This section proposes our approximation algorithm and its analysis.
 The approximation algorithm takes as input a collection of $n$ vectors $V$ and two parameters $(\epsilon, \delta)$ whose values are between 0 and 1. The algorithm outputs a set $C = \{\tilde{S}(u,v): u,v \in V, u\not= v\}$, where $\tilde{S}(u,v)$ is the $(\epsilon, \delta)$- approximation of cosine similarity between $u$ and $v$, i.e., with probability at least $1-\delta$, the worst approximation error in $C$ is at most $\epsilon$. Each vector in $V$ contains $m$ features. We take the $m$ features as the sample space $D = \{1,\cdots,m\}$. For each feature $s\in D$, let $f_{u,v}(s) = u_s\cdot v_s$, where $u_s$ is the $s$-th feature value of the vector $u$. Let $F = \{f_{u,v}: u,v\in V, u\not= v\}$. Thus $|F| < n^2/2$ since symmetry of cosine similarity. It is clear that the true average of $f_{u,v}$ equals to the cosine similarity between $u$ and $v$. Given the sampled features, the upper bound of $R_S(F)$ is 
 $$R_S(F) \leq \frac{\ell}{k}\sqrt{8\log |F|} < \frac{4\ell\sqrt{\log n}}{k},$$
 where $\ell = \sqrt{\max_{f\in F} \sum_{i=1}^k f(s_i)^2}$. Since $F$ is finite, we can replace supreme by maximum. 
 
 \subsection{The Algorithm}
 The approximation algorithm works in an iterative mode. For each iteration, we sample some new features $s_i$'s among $D$ and aggregate the feature products given by $f_{u,v}(s_i)$ for each $f_{u,v}$ in $F$. Then we compute the error upper bound:
-$$\Delta = \frac{4\ell\sqrt{\log n}}{k} +\left(m+m\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{mk}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}},$$
+$$\Delta = \min\left\{m\sqrt{\frac{2\log n + \log(1/\delta)}{2k}}, \frac{4\ell\sqrt{\log n}}{k} +\left(m+m\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{mk}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}\right\},$$
 where $\ell = \sqrt{\max_{f\in F} \sum_{i=1}^k f(s_i)^2}$, and $k$ is the number of aggregated samples. 
 If $\Delta \leq \epsilon$, then we stop and return the averages $\frac{1}{k}\sum_{s_i\in S}f_{u,v}(s_i)$ for each pair $u, v$. Otherwise, we continue to the next round, where we will sample more features. If $\Delta \leq \epsilon$ can never be satisfied, at the end we will sample all the $m$ features and return the averages as the exact solution. Algorithm \ref{alg:csa} gives the pseudocode of our solution. We use progressive approximation, i.e., for each round, the next sample size $k'$ is larger than the previous size $k$. The algorithm stops once the upper bound $\epsilon$ can be achieved.
 
-It is clear to verify the correctness of our algorithm by Theorem \ref{thm:main} and Theorem \ref{thm2}.
+It is clear to verify the correctness of our algorithm by Theorem \ref{thm:finite}, Theorem \ref{thm:main} and Theorem \ref{thm2}.
 
 \begin{algorithm}[!t]
 \caption{\textsf{Cosine Similarity Approximation}}
@@ -167,7 +177,7 @@ It is clear to verify the correctness of our algorithm by Theorem \ref{thm:main}
 		\State $S(u,v) \gets S(u,v)+u[s]\cdot v[s]$;
 		\State $S \gets S\cup \{s\}$;
 	\EndFor
-	\State $\Delta \gets \frac{4\ell\sqrt{\log n}}{k} +\left(m+m\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{mk}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}$;
+	\State $\Delta \gets \min\left\{m\sqrt{\frac{2\log n + \log(1/\delta)}{2k}}, \frac{4\ell\sqrt{\log n}}{k} +\left(m+m\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + m\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{mk}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}\right\}$;
 	\If {$\Delta \leq \epsilon$}
 		\State break the {\bf while} loop;
 	\EndIf
@@ -183,7 +193,7 @@ Note that in the upper bound $\Delta$ of Algorithm \ref{alg:csa}, $m$ is a domin
 $$\hat{m} = \max_{i\in [1,\cdots,m], u,v \in V, u\not= v}u[i]\cdot v[i],$$
 where $[1,\cdots,m]$ denotes all the $m$ features, and $V$ is the set of all vectors. Intuitively, $\hat{m}$ is the maximum value of all the feature products, and we assume we have a good estimation of $\hat{m}$. 
 Then we may choose the upper bound as follows:
-$$\Delta = \frac{4\ell\sqrt{\log n}}{k} +\hat{m}\left(1+\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + \sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{\hat{m}k}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}.$$
+$$\Delta = \min\left\{\hat{m}\sqrt{\frac{2\log n + \log(1/\delta)}{2k}}, \frac{4\ell\sqrt{\log n}}{k} +\hat{m}\left(1+\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + \sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{\hat{m}k}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}\right\}.$$
 We use experiments (in Section \ref{sec:eval}) to show that the improvement of the variant above is significant. 
 
 \section{Approximating SimRank}
@@ -230,13 +240,15 @@ It is clear that the true average $A_D(f_{a,b})$ equals to the SimRank between t
 \begin{theorem}
 \label{thm:new}
 Let $F$ be a collection of functions $f$ mapping $D$ to $[0,c]$. 
-With probability at least $1-\delta$, we have
+For any $\delta>0$, with probability at least $1-\delta$, we have
+$$\sup_{f\in F} | A_S(f) - A_D(f) | \leq c\sqrt{\frac{\log(2|F|) + \log(1/\delta)}{2k}}.$$
+and 
 $$\sup_{f\in F}|A_S(f) - A_D(f)| \leq R_S(F) + \left(c+c\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + c\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{8R_S(F)}{c}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}.$$
 \end{theorem}
 The proof is essentially the same as the proof of Theorem \ref{thm:main}. We leave the discussions to the Appendix. Also the upper bound of $R_S(F)$ given by Theorem \ref{thm2} remains unchanged.
 
 Our approximation algorithm works as follows. For each iteration, we sample some new features $s_i$'s among $D$, generate random walks $W_a$, $W_b$ from nodes $a$, $b$ given $s_i$ and aggregate $f_{a,b}(s_i)$ for each $f_{a,b}$ in $F$. Then we compute the error upper bound:
-$$\Delta = \frac{4\ell\sqrt{\log n}}{k} +\left(c+c\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + c\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{ck}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}},$$
+$$\Delta = \min\left\{c\sqrt{\frac{2\log n + \log(1/\delta)}{2k}}, \frac{4\ell\sqrt{\log n}}{k} +\left(c+c\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + c\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{ck}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}\right\},$$
 where $\ell = \sqrt{\max_{f\in F} \sum_{i=1}^k f(s_i)^2}$, and $k$ is the aggregated samples. 
 If $\Delta \leq \epsilon$, then we stop and return the averages $\frac{1}{k}\sum_{s_i\in S}f_{a,b}(s_i)$ for each pair $u, v$. Otherwise, we continue to the next round, where we will sample more features. If $\Delta \leq \epsilon$ can never be satisfied with a certain number of iterations, we return the approximated SimRank scores of node pairs, with the message that the input parameters $(\epsilon,\delta)$ cannot be satisfied by our algorithm.
 
@@ -266,7 +278,7 @@ It is clear to verify the correctness of our algorithm by Theorem \ref{thm:new} 
 			\EndIf
 		\EndFor
 	\EndFor
-	\State $\Delta \gets \frac{4\ell\sqrt{\log n}}{k} +\left(c+c\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + c\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{ck}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}$;
+	\State $\Delta \gets \min\left\{c\sqrt{\frac{2\log n + \log(1/\delta)}{2k}}, \frac{4\ell\sqrt{\log n}}{k} +\left(c+c\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + c\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{ck}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}\right\}$;
 	\If {$\Delta \leq \epsilon$}
 		\State break the {\bf for} loop;
 	\EndIf

@@ -1,3 +1,22 @@
+\subsection{Proof of Theorem \ref{thm:finite}}
+First, for any $\epsilon > 0$,
+$$\begin{aligned}
+\Pr[U_S(F) > \epsilon] =& \Pr[\exists f\in F, A_S(f) - A_D(f) > \epsilon] \\
+\leq & \sum_{f\in F} \Pr[A_S(f) - A_D(f) > \epsilon] \\
+=& \sum_{f\in F} \Pr[\frac{1}{k} \sum_{i=1}^k f(s_i) - A_D(f) > \epsilon]. \\
+\end{aligned}$$ 
+By Hoeffding's inequality \cite{BBL04} we have
+$$\Pr[\frac{1}{k} \sum_{i=1}^k f(s_i) - A_D(f) > \epsilon] \leq \exp\left(-\frac{2k\epsilon^2}{m^2}\right).$$
+Hence
+$$\Pr[U_S(F) > \epsilon] \leq |F| \exp\left(-\frac{2k\epsilon^2}{m^2}\right).$$
+Similarly one can show that
+$$\Pr[\sup_{f\in F} [ A_D(f) - A_S(f) ] > \epsilon] \leq |F| \exp\left(-\frac{2k\epsilon^2}{m^2}\right).$$
+Thus putting the two cases together,
+$$\Pr[\sup_{f\in F} | A_S(f) - A_D(f) | > \epsilon] \leq 2|F| \exp\left(-\frac{2k\epsilon^2}{m^2}\right).$$
+Equivalently for any $\delta>0$, with probability at least $1-\delta$,
+$$\sup_{f\in F} | A_S(f) - A_D(f) | \leq m\sqrt{\frac{\log(2|F|) + \log(1/\delta)}{2k}}.$$
+We have obtained the desired upper bound in Theorem \ref{thm:finite}.
+
 \subsection{Proof of Theorem \ref{thm:main}}
 In this section, we show our main result (Theorem \ref{thm:main}).
 We start from the definition of self bounding function \cite{Oneto13}.
@@ -162,4 +181,4 @@ $$R_S(F) \leq \frac{\ell}{k}\sqrt{8\log |F|}.$$
 
 
 \subsection{Discussions of Theorem \ref{thm:new}}
-Theorem \ref{thm:new} can be treated as a special case of Theorem \ref{thm:main} when $m=c$. All the reasoning will not be affected and thus the desired bound follows.
+Theorem \ref{thm:new} can be treated as a special case of Theorem \ref{thm:finite} and Theorem \ref{thm:main} when $m=c$. All the reasoning will not be affected and thus the desired bound follows.

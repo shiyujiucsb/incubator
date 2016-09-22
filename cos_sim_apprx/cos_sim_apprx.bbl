@@ -42,6 +42,12 @@ S~Boucheron, G~Lugosi, and Pascal Massart.
 \newblock A sharp concentration inequality with applications.
 \newblock {\em Random Structures and Algorithms}, 1999.
 
+\bibitem{BBL04}
+Olivier Bousquet, St{\'e}phane Boucheron, and G{\'a}bor Lugosi.
+\newblock Introduction to statistical learning theory.
+\newblock In {\em Advanced lectures on machine learning}, pages 169--207.
+  Springer, 2004.
+
 \bibitem{Bran01}
 Ulrik Brandes.
 \newblock A faster algorithm for betweenness centrality*.
