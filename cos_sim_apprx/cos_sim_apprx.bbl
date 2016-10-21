@@ -7,6 +7,12 @@ Maha Alabduljalil, Xun Tang, and Tao Yang.
   Research and development in information retrieval}, pages 713--722. ACM,
   2013.
 
+\bibitem{AMT13}
+Maha~Ahmed Alabduljalil, Xun Tang, and Tao Yang.
+\newblock Optimizing parallel algorithms for all pairs similarity search.
+\newblock In {\em Proceedings of the sixth ACM international conference on Web
+  search and data mining}, pages 203--212. ACM, 2013.
+
 \bibitem{AGO14}
 Davide Anguita, Alessandro Ghio, Luca Oneto, and Sandro Ridella.
 \newblock A deep connection between the vapnik--chervonenkis entropy and the
@@ -155,6 +161,11 @@ Jure Leskovec and Andrej Krevl.
 \newblock Snap datasets: Stanford large network dataset collection.
 \newblock {\em Stanford University}, 2015.
 
+\bibitem{LRU14}
+Jure Leskovec, Anand Rajaraman, and Jeffrey~David Ullman.
+\newblock {\em Mining of massive datasets}.
+\newblock Cambridge University Press, 2014.
+
 \bibitem{LH10}
 Cuiping Li, Jiawei Han, Guoming He, Xin Jin, Yizhou Sun, Yintao Yu, and Tianyi
   Wu.
@@ -247,6 +258,14 @@ Sandeep Tata and Jignesh~M Patel.
 \newblock Estimating the selectivity of tf-idf based cosine similarity
   predicates.
 \newblock {\em ACM Sigmod Record}, 36(2):7--12, 2007.
+
+\bibitem{TEL11}
+Ferhan Ture, Tamer Elsayed, and Jimmy Lin.
+\newblock No free lunch: brute force vs. locality-sensitive hashing for
+  cross-lingual pairwise similarity.
+\newblock In {\em Proceedings of the 34th international ACM SIGIR conference on
+  Research and development in Information Retrieval}, pages 943--952. ACM,
+  2011.
 
 \bibitem{Vap13}
 Vladimir Vapnik.
