@@ -36,12 +36,16 @@ All-pairs similarity search (APSS) has abundant applications in many fields such
 This paper proposes two approximation algorithms for cosine similarity based APSS and SimRank based APSS respectively. 
 We give the upper bounds of the approximation errors for the worst case by using Rademacher average.
 To the best of our knowledge, we are the first to apply Rademacher average to bound the errors in APSS approximation problems.
-{\color{blue} Our approximation algorithms can be used to efficiently verify the candidate pairs given by some popular Locality Sensitive Hashing based methods, which can locate the potentially similar pairs.}
+{\color{blue} Our approximation algorithms can be used to efficiently evaluate false positive and false negative of the candidate pairs given by some popular Locality Sensitive Hashing based methods, which can locate the potentially similar pairs.}
 We also evaluate our algorithms by experiments on real-world data sets to verify that our upper bounds are tight enough for practical use.
 \end{abstract}
 
 \section{Introduction}
-All-pairs similarity search (APSS) has received extensive research interest recently \cite{BMS07,Xia16,ATY13,TAJY14}. Collaborative filtering \cite{SKK01}, similarity-based recommendations \cite{RV97}, search query suggestions \cite{CJP08}, spam and plagiarism detection \cite{CDG07,LCH06} all find APSS useful in practice. However, it is time consuming to do an APSS since the time complexity grows quadratically with the problem scale \cite{BMS07,ATY13,TAJY14}. To improve performance, many approximation approaches have been proposed \cite{GIM99,FKS03,IM98,Char02}. Hence the computation \cite{BMS07,DHM04,Xia16,ATY13,TAJY14} and approximation \cite{GIM99,FKS03,IM98,Char02} of the all-pairs similarities have been popular in research for more than ten years. 
+All-pairs similarity search (APSS) has received extensive research interest recently \cite{BMS07,Xia16,ATY13,TAJY14}. Collaborative filtering \cite{SKK01}, similarity-based recommendations \cite{RV97}, search query suggestions \cite{CJP08}, spam and plagiarism detection \cite{CDG07,LCH06} all find APSS useful in practice. However, it is time consuming to do an APSS since the time complexity grows quadratically with the problem scale \cite{BMS07,ATY13,TAJY14}. To improve performance, many approximation approaches have been proposed \cite{GIM99,FKS03,IM98,Char02,LRU14,}. Hence the computation \cite{BMS07,DHM04,Xia16,ATY13,TAJY14} and approximation \cite{LRU14,GIM99,FKS03,IM98,Char02} of the all-pairs similarities have been popular in research for more than ten years.
+
+{\color{blue}
+One of the most popular methods to approximate APSS is by using Locality Sensitive Hashing (LSH) \cite{LRU14}. The basic idea is to use LSH to map potentially similar objects into the same bucket. Hence there is no need to compare dissimilar pairs, which are unlikely to be mapped into the same bucket. Very often the number of objects in one bucket is much less than the number of total objects. Thus this method can be efficient in practice. However the false positive and false negative of this LHS-based method can be non-negligible. In particular, if the cosine similarity between two vectors is $\cos \theta$, then with probability $1-(1-(\theta/\pi)^r)^b$ (where $r$ is the number of rows and $b$ is the number of bands \cite{LRU14}), these two vectors are mapped into the same bucket. Clearly assuming the product of $r$ and $b$ is the fixed signature length, if $b$ is too large, even though the similarity is less than the threshold, the two vectors can still be mapped into one bucket with high probability, i.e., the LHS-based scheme has low precision. Conversely if $b$ is too small, some similar vectors can be lost since they can be mapped into different buckets with high probability, i.e., the recall is low. Thus to tune $r$ and $b$, one has to evaluate the quality of the candidate pairs in the buckets, e.g., 1) choose a subset of candidate pairs and compute (or approximate) their similarities, and check how many are above the threshold, and 2) choose a subset of non-candidate pairs and compute (or approximate) their similarities and check how many are below the threshold. For a large scale dataset, the number of pairs to be evaluated can be very large. Thus we can use approximation with high precision instead of exact computation for efficiency. This paper investigates how to approximate the similarities precisely and efficiently so that the time needed for evaluation can be greatly reduced.
+}
 
 This paper considers two approximation methods for cosine similarity based search \cite{SGM00,Xia16,ATY13,TAJY14}, and SimRank based search \cite{JW02,LH10,FNS13,KMK14} respectively. Our solution idea is to treat the cosine similarity or SimRank between two vectors as a true average over random variables, and then we can use sampled average to approximate the true average. We explain the details as follows:
 \begin{itemize}
@@ -59,21 +63,24 @@ $$\textsf{SimRank}(a,b) = \sum_{t: (a,b) \rightsquigarrow (x,x)} P[t]\cdot c^{L(
 where $t$ is a pair of random walks with the same length $L(t)$, which lead the starting nodes $a$ and $b$ to meet at one node $x$, and $P[t]$ denotes the probability when $t$ is chosen. Hence SimRank can be treated as the true average of the random variable $c^{L(t)}$, where $t$ is taken over the space of all the pairs of random walks that start from the two nodes respectively. Thus similarly, we can sample over the random walk space and then use the sampled average as an approximation. Again, tight error bounds given by Rademacher average are also inherited.
 \end{itemize}
 
-The approximation error of each our algorithm can be upper bounded by using Rademacher average \cite{BM02,Mohri09,BBM05}. We can treat the similarity approximation as a learning problem over large scaled data set. In the analysis, we want to upper bound the approximation error for the worst case, i.e., to bound the maximum error $\overline{E}$ among all pairs:
-$$\overline{E} = \max_{u\not =v} |\widetilde{Sim}(u,v) - Sim(u,v)|.$$
+The approximation error of each our algorithm can be upper bounded by using Rademacher average \cite{BM02,Mohri09,BBM05}. We can treat the similarity approximation as a learning problem over large scale data set. In the analysis, we want to upper bound the approximation error for the worst case, i.e., to bound the maximum error $\overline{E}$ among the pairs of our observation:
+$$\overline{E} = \max_{(u,v)\in P} |\widetilde{Sim}(u,v) - Sim(u,v)|.$$
+{\color{blue}We can use LSH-based scheme to choose the set of pairs $P$ to be observed. }
 Rademacher average does an excellent job on how to bound such maximum error \cite{RU15,RU16}. The key result we use in this paper is that with probability at least $1-\delta$,
-$$\overline{E} \leq \min\left\{c\sqrt{\frac{2\log n + \log(1/\delta)}{2k}}, R + c\left(1+\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + \sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{8R}{c}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}\right\},$$
-where $R$ denotes the Rademacher average of the data set, $n$ is the number of vectors (or nodes), $k$ is the number of samples, and $c$ is the number of features for cosine similarity (or the SimRank constant between 0 and 1). 
+$$\overline{E} \leq \min\left\{c\sqrt{\frac{\log p + \log(1/\delta)}{2k}}, R + c\left(1+\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + \sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{8R}{c}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}\right\},$$
+where $p=|P|$, $R$ denotes the Rademacher average of the data set, $n$ is the number of vectors (or nodes), $k$ is the number of samples, and $c$ is the number of features for cosine similarity (or the SimRank constant between 0 and 1). 
 It is also possible to upper bound the Rademacher average by the state-of-art results \cite{AGO14,RU15,RU16}. Thus we can find an upper bound of the worst errors for our approximation algorithms.
 
-\textbf{Our Contributions}. We are the first to give the approximation algorithms for APSS that can achieve upper bounds on maximum errors, and to show the upper bounds by using Rademacher average. We also evaluate our algorithms by using real-world data sets.
+{\color{blue}
+\textbf{Our Contributions}. We are the first to give the approximation algorithms for APSS that can achieve upper bounds on maximum errors for the worst case, and to show the upper bounds by using Rademacher average. Our approximation algorithms can be used to help reduce the time used for evaluation in the popular LSH-based dissimilar detection. We also evaluate our algorithms by using real-world data sets.
+}
 
 The rest of this paper is organized as follows. Section \ref{sec:rw} discusses the related works. Section \ref{sec:pp} introduces the problem settings and reviews some technical background. Section \ref{sec:acs} approximates the cosine similarity based APSS and also gives the analysis on the upper bound of maximum errors. Section \ref{sec:asr} approximates the SimRank based APSS and also gives an upper bound on maximum errors. Section \ref{sec:eval} evaluates our algorithms and presents the experimental results. Section \ref{sec:con} concludes this paper and discusses some possible future works.
 
 
 \section{Related Works}
 \label{sec:rw}
-All-pairs similarity search (APSS) is recently a popular research topic in the community of information retrieval \cite{BMS07,Xia16,ATY13,TAJY14}. Given a big set of objects, the goal of APSS is to efficiently compute (or approximate) the similarities between each pair of objects. Many similarity measures have been proposed \cite{SGM00}, e.g., Cosine Similarity \cite{TP07}, SimRank \cite{JW02}, Jaccard Index \cite{HHH89}, Metric Distance \cite{SGM00}, Pearson Correlation \cite{BCY09}, etc. For similarity search, Cosine Similarity and SimRank are very popular (\cite{TP07,Xia16,ATY13,TAJY14} for Cosine, and \cite{LH10,FNS13,KMK14,YM15} for SimRank). A major challenge of APSS is the large volume of computation: given $n$ objects, without any assumption on the similarity distribution (e.g., the similarity matrix is sparse), the time complexity is at least $O(n^2)$. To compute more efficiently, the state-of-art research works often use parallelism \cite{CCK12,HFL10} and dissimilarity detection \cite{LRU14,ATY13,TAJY14}. {\color{blue} One popular method to eliminate dissimilar pairs is to hash vectors into buckets by Locality Sensitive Hashing (LSH) \cite{LRU14}, and the candidate pairs are only between the vectors in the same bucket. However, since such methods can introduce non-negligible false positive and false negative \cite{AMT13,TEL11}, further verifications on the candidate pairs (or missing potential pairs) are needed. Partition-based Similarity Search (PSS) uses partitions to cluster the candidate pairs \cite{TAJY14}. Very often some partitions are still large, and hence further approximations on the similarities may be needed to avoid redundant comparisons.} If only approximations are needed, how to efficiently sample with negligible error for similarity search is another research focus \cite{GIM99,FKS03,IM98,Char02}. This paper focuses on the approximation problem.
+All-pairs similarity search (APSS) is recently a popular research topic in the community of information retrieval \cite{BMS07,Xia16,ATY13,TAJY14}. Given a big set of objects, the goal of APSS is to efficiently compute (or approximate) the similarities between each pair of objects. Many similarity measures have been proposed \cite{SGM00}, e.g., Cosine Similarity \cite{TP07}, SimRank \cite{JW02}, Jaccard Index \cite{HHH89}, Metric Distance \cite{SGM00}, Pearson Correlation \cite{BCY09}, etc. For similarity search, Cosine Similarity and SimRank are very popular (\cite{TP07,Xia16,ATY13,TAJY14} for Cosine, and \cite{LH10,FNS13,KMK14,YM15} for SimRank). A major challenge of APSS is the large volume of computation: given $n$ objects, without any assumption on the similarity distribution (e.g., the similarity matrix is sparse), the time complexity is at least $O(n^2)$. To compute more efficiently, the state-of-art research works often use parallelism \cite{CCK12,HFL10} and dissimilarity detection \cite{LRU14,ATY13,TAJY14}. {\color{blue} One popular method to eliminate dissimilar pairs is to hash vectors into buckets by Locality Sensitive Hashing (LSH) \cite{LRU14}, and the candidate pairs are only between the vectors in the same bucket. However, since such methods can introduce non-negligible false positive and false negative \cite{AMT13,TEL11}, further verifications on the candidate pairs (or missing potential pairs) are needed. Partition-based Similarity Search (PSS) uses partitions to cluster the candidate pairs \cite{TAJY14}. Very often some partitions are still large, and hence further approximations on the similarities may be needed to avoid redundant computation.} If only approximations are needed, how to efficiently sample with negligible error for similarity search is another research focus \cite{GIM99,FKS03,IM98,Char02}. This paper focuses on the approximation problem.
 
 We may treat the similarity approximation as a learning problem over large scaled data, and we need to upper bound the learning error for the worst case. In statistical learning theory, such upper bounds are usually called risk bounds \cite{Vap13}. There are two classical methods to compute the risk bounds: by Vapnik–Chervonenkis (VC) dimension \cite{VLL94,Vap98,Vap13} and by Rademacher average \cite{Mohri09,BM02,BBM05}. Many approximation algorithms that use these two techniques have been proposed \cite{RK14,RK16,RU15,RU16}. Riondato and Kornaropoulos \cite{RK14,RK16} proposed algorithms that use VC dimension to upper bound the sample size that is sufficient to approximate the betweenness centralities \cite{Bran01} of all nodes in a graph with guaranteed error bounds. One limitation of the VC-based algorithms is that the upper bounds of some characteristic quantities (e.g., the maximum length of any shortest path) are needed \cite{RK14,RK16,RU16}. But such bounds are not always available. One year later, Riondato and Upfal used Rademacher average to approximate the frequent itemsets \cite{RU15} and betweenness centralities \cite{RU16}. They also found that by using Rademacher average, we can avoid the aforementioned limitation of VC-based solutions. It has been proved that Rademacher average can be applied to various approximation problems, which are out of the scope of classical learning framework. This paper basically follows this idea. To the best of our knowledge, there is no research work connecting similarity approximation with Rademacher average. We attempt to fill this void.
 
@@ -216,7 +223,7 @@ i.e., the number of steps before two surfers starting from $a$, $b$ meet at some
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
 \begin{algorithmic}
-\Require{reversed graph $\overline{G}$, sequence $(s_1,\cdots,s_T) \in [0,1]^T$, starting node $a$.}
+\Require{reversed graph $\overline{G}$; sequence $(s_1,\cdots,s_T) \in [0,1]^T$; starting node $a$.}
 \Ensure{a random walk $W = (a,\cdots)$ starting from $a$.}
 \State Let $W$ be a sequence of length $T+1$;
 \State $W[0] \gets a$;
@@ -253,9 +260,9 @@ $$\sup_{f\in F}|A_S(f) - A_D(f)| \leq R_S(F) + \left(c+c\sqrt{\frac{8}{k}\log \f
 The proof is essentially the same as the proofs of Theorem \ref{thm:finite} and Theorem \ref{thm:main}. We leave the discussions to the Appendix. Also the upper bound of $R_S(F)$ given by Theorem \ref{thm2} remains unchanged.
 
 Our approximation algorithm works as follows. For each iteration, we sample some new features $s_i$'s among $D$, generate random walks $W_a$, $W_b$ from nodes $a$, $b$ given $s_i$ and aggregate $f_{a,b}(s_i)$ for each $f_{a,b}$ in $F$. Then we compute the error upper bound:
-$$\Delta = \min\left\{c\sqrt{\frac{2\log n + \log(1/\delta)}{2k}}, \frac{4\ell\sqrt{\log n}}{k} +\left(c+c\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + c\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{ck}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}\right\},$$
-where $\ell = \sqrt{\max_{f\in F} \sum_{i=1}^k f(s_i)^2}$, and $k$ is the aggregated samples. 
-If $\Delta \leq \epsilon$, then we stop and return the averages $\frac{1}{k}\sum_{s_i\in S}f_{a,b}(s_i)$ for each pair $u, v$. Otherwise, we continue to the next round, where we will sample more features. If $\Delta \leq \epsilon$ can never be satisfied with a certain number of iterations, we return the approximated SimRank scores of node pairs, with the message that the input parameters $(\epsilon,\delta)$ cannot be satisfied by our algorithm.
+$$\Delta = \min\left\{c\sqrt{\frac{\log p + \log(1/\delta)}{2k}}, \frac{\ell\sqrt{8\log p}}{k} +\left(c+c\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + c\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{16\ell\sqrt{2\log p}}{ck}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}\right\},$$
+where $p$ is the size of the observed pairs $P$, $\ell = \sqrt{\max_{f\in F} \sum_{i=1}^k f(s_i)^2}$, and $k$ is the aggregated samples. 
+If $\Delta \leq \epsilon$, then we stop and return the averages $\frac{1}{k}\sum_{s_i\in S}f_{a,b}(s_i)$ for each pair $u$, $v$. Otherwise, we continue to the next round, where we will sample more features. If $\Delta \leq \epsilon$ can never be satisfied with a certain number of iterations, we return the approximated SimRank scores of node pairs, with the message that the input parameters $(\epsilon,\delta)$ cannot be satisfied by our algorithm.
 
 It is clear to verify the correctness of our algorithm by Theorem \ref{thm:new} and Theorem \ref{thm2}.
 
@@ -265,7 +272,7 @@ It is clear to verify the correctness of our algorithm by Theorem \ref{thm:new} 
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
 \begin{algorithmic}
-\Require{reversed graph $\overline{G}$; $\epsilon \in (0,1)$; $\delta \in (0,1)$; maximum random walk length $T$; maximum number of iterations $R$; SimRank constant $c$.}
+\Require{reversed graph $\overline{G}$; observed pairs $P$ s.t. $p=|P|$; $\epsilon \in (0,1)$; $\delta \in (0,1)$; maximum random walk length $T$; maximum number of iterations $R$; SimRank constant $c$.}
 \Ensure{$\mathsf{SimRank}(u,v)$ for each $u, v \in V$ s.t. $u\not= v$.}
 \State $k \gets 0$;
 \State $S(u,v) \gets 0$ for each $u, v \in V$ s.t. $u\not= v$;
@@ -273,7 +280,7 @@ It is clear to verify the correctness of our algorithm by Theorem \ref{thm:new} 
 	\State $k' \gets \textsf{next-sample-size}(k)$;
 	\For {$i$ from $k$ to $k'-1$}
 		\State Uniformly sample a feature $s$ from $[0,1]^{2T}$;
-		\For {each $a,b \in V\times V$ s.t. $a\not= b$}
+		\For {each $(a,b) \in P$}
 			\State $W_a \gets \textsf{Random Walk Generation}(s[1\cdots T])$;
 			\State $W_b \gets \textsf{Random Walk Generation}(s[(T+1)\cdots 2T])$;
 			\State $L \gets \{j: 1\leq j\leq T, W_a[j] = W_b[j]\}$;
@@ -283,7 +290,7 @@ It is clear to verify the correctness of our algorithm by Theorem \ref{thm:new} 
 			\EndIf
 		\EndFor
 	\EndFor
-	\State $\Delta \gets \min\left\{c\sqrt{\frac{2\log n + \log(1/\delta)}{2k}}, \frac{4\ell\sqrt{\log n}}{k} +\left(c+c\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + c\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{32\ell\sqrt{\log n}}{ck}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}\right\}$;
+	\State $\Delta \gets \min\left\{c\sqrt{\frac{\log p + \log(1/\delta)}{2k}}, \frac{\ell\sqrt{8\log p}}{k} +\left(c+c\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + c\sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{16\ell\sqrt{2\log p}}{ck}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}\right\}$;
 	\If {$\Delta \leq \epsilon$}
 		\State break the {\bf for} loop;
 	\EndIf
@@ -295,6 +302,10 @@ It is clear to verify the correctness of our algorithm by Theorem \ref{thm:new} 
 \State {\bf return} $\mathsf{S}$.
 \end{algorithmic}
 \end{algorithm}
+
+{\color{blue}
+Similarly to cosine similarity approximation, we can apply our SimRank approximation to evaluate the quality of candidate pairs given by some LSH-based scheme. For example, we may define a LSH by putting the nodes within a cluster (defined as a group of close nodes, e.g., one can walk from one to any other within a few edges) into the same bucket, and assuming each pair of nodes in one bucket as a candidate pair. Based on the evaluation results, e.g., approximated false positive and false negative, to tune the parameters in LSH-based scheme, e.g. $b$ and $r$. In particular, increase $b$ when recall is low and decrease $b$ when precision is low.
+}
 
 \section{Evaluation}
 \label{sec:eval}
@@ -424,7 +435,8 @@ Figure \ref{fig:run_cos} and Figure \ref{fig:run_sr} give the running time of ou
 \section{Conclusion and Future Research}
 \label{sec:con}
 In this paper we have given two approximation algorithms (on cosine similarity and SimRank respectively) for all-pairs similarity search. 
-A rigorous analysis using Rademacher average has been presented.
+A rigorous analysis using Rademacher average has been presented. 
+{\color{blue}As an important application, we have discussed how to use our approximations to efficiently tune the parameters and improve the performance of the popular LSH-based dissimilar detection. }
 We also have evaluated their performance by experiments on both synthesized and real-world data sets. The results show that our algorithms can precisely approximate the similarities with acceptable time complexity and error probability. 
 
 We note that the upper bounds in this paper still have some space to improve. In the experiments our upper bounds are roughly 5 to 10 times the maximum absolute errors. In the proofs it is unclear whether the bounds we have used are the best possible. Hence the algorithms could be improved. Also it can be an interesting topic how to more efficiently use parallelism in APSS samplings.
