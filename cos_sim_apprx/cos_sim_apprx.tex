@@ -202,7 +202,7 @@ It is clear to verify the correctness of our algorithm by Theorem \ref{thm:finit
 \subsection{Improving the Upper Bound}
 \label{sec:imprb}
 Note that in the upper bound $\Delta$ of Algorithm \ref{alg:csa}, $m$ is a dominating variable: it is proportional to $\Delta$. Usually $m$ can be quite large, e.g., from 100 to 10K. Thus it is worth investigating how to mitigate the negative effect of large $m$. The idea comes from Theorem \ref{thm:main}, which assumes the range of each function $f$ is $[0,m]$. However in reality, most feature products $u[s]\cdot v[s]$ are close to zero due to sparsity, and its maximum value shall be much less than $m$. In practice, usually we can assume there is a good estimation (much less than $m$) on the maximum feature product based on historic experience. To further lower the upper bound $\Delta$, a variant of Algorithm \ref{alg:csa} may use the bound as follows:
-$$\hat{m} = \max_{i\in [1,\cdots,m], u,v \in V, u\not= v}u[i]\cdot v[i],$$
+$$\hat{m} = \max_{i\in [1,\cdots,m], (u,v) \in P}u[i]\cdot v[i],$$
 where $[1,\cdots,m]$ denotes all the $m$ features, and $V$ is the set of all vectors. Intuitively, $\hat{m}$ is the maximum value of all the feature products, and we assume we have a good estimation of $\hat{m}$, which can be chosen by sampling from historical data. 
 Then we may choose the upper bound as follows:
 $$\Delta = \min\left\{\hat{m}\sqrt{\frac{\log p + \log(1/\delta)}{2k}}, \frac{\ell\sqrt{8\log p}}{k} +\hat{m}\left(1+\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + \sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{16\ell\sqrt{2\log p}}{\hat{m}k}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}\right\}.$$
@@ -218,7 +218,8 @@ In this section we discuss the possible methods to 1) detect potentially similar
 For each method, we consider complexity and accuracy.
 \begin{itemize}
 \item \emph{Complexity}. We consider time complexity (i.e., how much running time is needed) and space complexity (i.e., how much memory is needed).
-\item \emph{Accuracy}. We consider precision (i.e., how many of the candidate pairs given by the algorithm are correct) and recall (i.e., how many of the correct pairs are identified by the algorithm).
+\item \emph{Accuracy}. We consider precision (i.e., how many of the candidate pairs given by the algorithm are correct) and recall (i.e., how many of the correct pairs are identified by the algorithm). 
+\item \emph{Error Bound}. In the previous sections we have discussed the error upper bound for the worst case, i.e., LSH + Sampling gives $O(\sqrt{\log p})$ bound, while pure sampling on the entire dataset gives $O(\sqrt{\log n^2})$ bound. Often the size $p$ of candidate pairs given by LSH is much less than the number of all pairs $n^2$. Hence LSH + Sampling outperforms with tighter bound and thus fewer samples.
 \end{itemize}
 
 \subsection{Similarity Detection Given Threshold}
@@ -422,7 +423,7 @@ For the SimRank approximation, we use two networks from \texttt{ego-Twitter} and
 
 Figure \ref{fig:cnae} and Figure \ref{fig:cuae} present the maximum approximation errors and upper bound given by Algorithm \ref{alg:csa} for the synthesized data sets.
 Here \textsf{MaxError} denotes the maximum absolute error among all the vector pairs, i.e.,
-$$\textsf{MaxError} = \max_{u,v\in V,u\not= v} |\widetilde{Sim}(u,v) - Sim(u,v)|,$$
+$$\textsf{MaxError} = \max_{(u,v)\in P} |\widetilde{Sim}(u,v) - Sim(u,v)|,$$
 where $\widetilde{Sim}(u,v)$ is the approximated similarity between $u$ and $v$ given by our algorithms. The upper bound \textsf{Delta} is the $\Delta$ given in Algorithm \ref{alg:csa}, and we use the improved bound given in Section \ref{sec:imprb}. For the improved bound, we observe that with overwhelming probability, each feature product between any two vectors is less than 20.0 when $m=1000$. Hence we choose the adjusted parameter $\hat{m} = 20.0$. See Section \ref{sec:imprb} for details. 
 For both figures, when more samples are drawn, the maximum absolute errors and upper bounds decrease. Also our improved upper bounds are significantly tighter than the bounds by $m$, but they are still much larger than the maximum absolute errors. Hence our theoretical bounds are still quite loose. However, our improved bounds can be sufficient for practical use. For uniform distribution, by 200 samplings, we can guarantee that the maximum absolute error among all the vector pairs is less than 0.005 with probability at least 99.99\%. Note that we have normalized the cosine similarities to be between 0 and 1. Similarly for normal distribution, by 200 samplings we can guarantee that with probability at least 99.99\%, the maximum absolute error is less than 0.005. However, the actual maximum error is only 0.001. Thus our bound is still quiteite loose.
 
