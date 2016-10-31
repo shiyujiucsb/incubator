@@ -8,7 +8,7 @@
 \usepackage{algorithm}
 \usepackage{algorithmicx}
 \usepackage{algpseudocode}
-%\usepackage{booktabs}
+\usepackage{booktabs}
 \usepackage{color}
 
 %\renewcommand{\baselinestretch}{0.95}
@@ -203,10 +203,83 @@ It is clear to verify the correctness of our algorithm by Theorem \ref{thm:finit
 \label{sec:imprb}
 Note that in the upper bound $\Delta$ of Algorithm \ref{alg:csa}, $m$ is a dominating variable: it is proportional to $\Delta$. Usually $m$ can be quite large, e.g., from 100 to 10K. Thus it is worth investigating how to mitigate the negative effect of large $m$. The idea comes from Theorem \ref{thm:main}, which assumes the range of each function $f$ is $[0,m]$. However in reality, most feature products $u[s]\cdot v[s]$ are close to zero due to sparsity, and its maximum value shall be much less than $m$. In practice, usually we can assume there is a good estimation (much less than $m$) on the maximum feature product based on historic experience. To further lower the upper bound $\Delta$, a variant of Algorithm \ref{alg:csa} may use the bound as follows:
 $$\hat{m} = \max_{i\in [1,\cdots,m], u,v \in V, u\not= v}u[i]\cdot v[i],$$
-where $[1,\cdots,m]$ denotes all the $m$ features, and $V$ is the set of all vectors. Intuitively, $\hat{m}$ is the maximum value of all the feature products, and we assume we have a good estimation of $\hat{m}$. 
+where $[1,\cdots,m]$ denotes all the $m$ features, and $V$ is the set of all vectors. Intuitively, $\hat{m}$ is the maximum value of all the feature products, and we assume we have a good estimation of $\hat{m}$, which can be chosen by sampling from historical data. 
 Then we may choose the upper bound as follows:
 $$\Delta = \min\left\{\hat{m}\sqrt{\frac{\log p + \log(1/\delta)}{2k}}, \frac{\ell\sqrt{8\log p}}{k} +\hat{m}\left(1+\sqrt{\frac{8}{k}\log \frac{2}{\delta}} + \sqrt{\frac{8}{k}\log \frac{2}{\delta} + \frac{16\ell\sqrt{2\log p}}{\hat{m}k}}\right)\sqrt{\frac{\log \frac{8}{\delta}}{2k}}\right\}.$$
 We use experiments (in Section \ref{sec:eval}) to show that the improvement of the variant above is significant. 
+
+\section{Similarity Detection Given Threshold and Top-$K$ Approximation}
+In this section we discuss the possible methods to 1) detect potentially similar pairs given a threshold $\tau$, and 2) approximate the top $k$ most similar vector pairs. We compare three methods given as follows:
+\begin{itemize}
+\item {\bf LSH + Sampling}. We use LSH to map potentially similar pairs into the same bucket, and then for the pairs in one bucket, we use our sampling-based $(\epsilon, \delta)$-approximation algorithm to validate their similarity, and find the top $K$ most similar pairs if needed.
+\item {\bf LSH + Exact Validation}. We use LSH to group potentially similar pairs, and then use exact computation to obtain the similarity between each pair in one bucket, and find the top $K$ if needed.
+\item {\bf Pure Sampling}. We directly use our sampling-based $(\epsilon, \delta)$-approximation algorithm on all the dataset, and find the top $K$ if needed.
+\end{itemize}
+For each method, we consider complexity and accuracy.
+\begin{itemize}
+\item \emph{Complexity}. We consider time complexity (i.e., how much running time is needed) and space complexity (i.e., how much memory is needed).
+\item \emph{Accuracy}. We consider precision (i.e., how many of the candidate pairs given by the algorithm are correct) and recall (i.e., how many of the correct pairs are identified by the algorithm).
+\end{itemize}
+
+\subsection{Similarity Detection Given Threshold}
+
+\begin{table}[!t]
+\centering
+\begin{tabular}{ c | c  c  c }
+\specialrule{1pt}{1pt}{1pt}
+Methods & LSH + Sampling & LSH + Exact Validation & Pure Sampling \\
+\hline
+Time & $O(nbr + kp)$ & $O(nbr + mp)$ & $O(kn^2)$\\
+Space & $O(nbr + p)$ & $O(nbr + p)$ & $O(n^2)$\\
+Precision & $\geq (1-P_\epsilon^\tau \cdot P_\theta^{r,b})(1-\delta) $ & 1 & $\geq (1-P_\epsilon^\tau)(1-\delta)$\\
+Recall & $\geq P_\theta^{r,b}(1-P_\epsilon^\tau)(1-\delta)$ & $\geq P_\theta^{r,b}$ & $\geq (1-P_\epsilon^\tau)(1-\delta)$\\
+\specialrule{1pt}{1pt}{1pt}
+\end{tabular}
+\caption{Complexity and accuracy analysis of our methods to detect similar pairs given threshold $\tau = \cos \theta$.}
+\label{tab:sdgt}
+\end{table}
+
+Table \ref{tab:sdgt} gives the complexity and accuracy of the three above methods. We first explain the used notations as follows:
+\begin{itemize}
+\item $P_\theta^{r,b}$ is the \emph{lower bound} of the probability that a pair of vectors $u$, $v$ s.t. $u\cdot v \geq \cos\theta$, are mapped into the same bucket by LSH. In particular,
+$$P_\theta^{r,b} = 1 - \left(1-\left(1-\frac{\theta}{\pi}\right)^r\right)^b,$$ 
+where $r$ is the number of rows, $b$ is the number of bands, and $r\cdot b$ is the signature length of LSH. Note that $\tau = \cos\theta$.
+$P_\theta^{r,b}$ is also the \emph{upper bound} of the probability that a pair of vectors with similarity less than $\tau$ are mapped into the same bucket (which gives false positive).
+\item $P_\epsilon^\tau$ is the probability that the cosine similarity of any vector pair is within the interval $\tau\pm\epsilon$. 
+\end{itemize}
+All the other notations are the same as in the previous sections: $n$ is the number of vectors; $m$ is the number of features; $k$ is the number of sampled features; $p$ is the size of the candidate pairs $P$; $\epsilon$ and $\delta$ are the input parameters of our sampling algorithms.
+
+We explain some bounds in Table \ref{tab:sdgt}. 
+\begin{itemize}
+\item For LSH + Sampling, the only pairs that can impact the precision are the pairs that have cosine similarities within the interval $(\tau-\epsilon,\tau)$. These pairs close to the $\tau$-boundary have probability at most $P_\theta^{r,b}$ to be mapped into the same bucket, and then might be falsely accepted by our $(\epsilon,\delta)$-approximation. With probability at least $1-\delta$, we can assume our approximation algorithm will not accept any pair with similarity less than $\tau-\epsilon$. Hence the lower bound of precision follows. 
+\item For LSH + Sampling, with probability at least $1-\delta$, we assume our approximation makes no mistake on the pairs with similarity larger than $\tau+\epsilon$. The ratio of these safe pairs in all the correct pairs is at least $1-P_\epsilon^\tau$. Hence the lower bound of recall follows.
+\end{itemize}
+Other bounds are clear to verify. With small enough errors $\epsilon$ and $\delta$, LSH + Sampling is competitive with high accuracy and less time complexity.
+
+\subsection{Top-$k$ Similarity Approximation}
+
+\begin{table}[!t]
+\centering
+\begin{tabular}{ c | c  c  c }
+\specialrule{1pt}{1pt}{1pt}
+Methods & LSH + Sampling & LSH + Exact Validation & Pure Sampling \\
+\hline
+Time & $O(nbr + kp + p\log p)$ & $O(nbr + mp + p\log p)$ & $O(kn^2)$\\
+Space & $O(nbr + p)$ & $O(nbr + p)$ & $O(n^2)$\\
+Precision & $\geq P_{(K)}^{r,b}(1-P_\epsilon^{(K)})(1-\delta) $ & $\geq P_{(K)}^{r,b}$ & $\geq (1-P_\epsilon^{(K)})(1-\delta)$\\
+Recall & $\geq P_{(K)}^{r,b}(1-P_\epsilon^{(K)})(1-\delta) $ & $\geq P_{(K)}^{r,b}$ & $\geq (1-P_\epsilon^{(K)})(1-\delta)$\\
+\specialrule{1pt}{1pt}{1pt}
+\end{tabular}
+\caption{Complexity and accuracy analysis of our methods to approximate top $K$.}
+\label{tab:tk}
+\end{table}
+
+Table \ref{tab:tk} gives the complexity and accuracy of our methods to approximate top $K$. The notations and results are similar to Table \ref{tab:sdgt}, except
+\begin{itemize}
+\item $P_{(K)}^{r,b}$ is the lower bound of the probability that any top-$K$ most similar pair of vectors are mapped into the same bucket. 
+\item $P_\epsilon^{(K)}$ is the probability that the similarity difference between any pair and the $K$-th most similar pair is within $\epsilon$.
+\end{itemize}
+The analysis is similar to the case given a threshold. Note that since the algorithms always select $K$ candidate pairs as the result, precision equals to recall. The $p \log p$ term is due to the sorting algorithm used to find the top $K$.
 
 \section{Approximating SimRank}
 \label{sec:asr}
