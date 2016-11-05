@@ -278,6 +278,9 @@ Recall & $\geq P_{(K)}^{r,b}(1-P_\epsilon^{(K)})(1-\delta) $ & $\geq P_{(K)}^{r,
 Table \ref{tab:tk} gives the complexity and accuracy of our methods to approximate top $K$. The notations and results are similar to Table \ref{tab:sdgt}, except
 \begin{itemize}
 \item $P_{(K)}^{r,b}$ is the lower bound of the probability that any top-$K$ most similar pair of vectors are mapped into the same bucket. 
+In particular,
+$$P_{(K)}^{r,b} = 1 - \left(1-\left(1-\frac{\theta^{(K)}}{\pi}\right)^r\right)^b,$$ 
+where $\theta^{(K)}$ is the angle between the $K$-th most similar pair of vectors. Usually top-$K$ candidates are very competitive and thus $\theta^{(K)}$ can be quite small, making $P_{(K)}^{r,b}$ close to 1.
 \item $P_\epsilon^{(K)}$ is the probability that the similarity difference between any pair and the $K$-th most similar pair is within $\epsilon$.
 \end{itemize}
 The analysis is similar to the case given a threshold. Note that since the algorithms always select $K$ candidate pairs as the result, precision equals to recall. The $p \log p$ term is due to the sorting algorithm used to find the top $K$.

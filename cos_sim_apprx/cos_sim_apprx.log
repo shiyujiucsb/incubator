@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=latex 2016.9.6)  30 OCT 2016 23:38
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=latex 2016.9.6)  1 NOV 2016 15:31
 entering extended mode
 **./cos_sim_apprx.tex
 (cos_sim_apprx.tex
@@ -491,20 +491,20 @@ File: cos_arxiv_apprx_error.eps Graphic file (type eps)
  <cos_arxiv_apprx_error.eps>
 File: cos_email_apprx_error.eps Graphic file (type eps)
  <cos_email_apprx_error.eps>
+[12]
 File: simrank_rg_apprx_error.eps Graphic file (type eps)
-
-<simrank_rg_apprx_error.eps>
+ <simrank_rg_apprx_error.eps>
 File: simrank_sw_apprx_error.eps Graphic file (type eps)
- <simrank_sw_apprx_error.eps> [12]
+ <simrank_sw_apprx_error.eps>
 File: simrank_twitter_apprx_error.eps Graphic file (type eps)
  <simrank_twitter_apprx_error.eps>
 File: simrank_gplus_apprx_error.eps Graphic file (type eps)
 
-<simrank_gplus_apprx_error.eps> [13]
+<simrank_gplus_apprx_error.eps>
 File: cos_runtime.eps Graphic file (type eps)
  <cos_runtime.eps>
 File: simrank_runtime.eps Graphic file (type eps)
- <simrank_runtime.eps> (cos_sim_apprx.bbl [14] [15] [16]
+ <simrank_runtime.eps> [13] (cos_sim_apprx.bbl [14] [15] [16]
 Missing character: There is no â in font cmr10!
 Missing character: There is no € in font cmr10!
 Missing character: There is no ˜ in font cmr10!
@@ -516,10 +516,10 @@ Missing character: There is no ™ in font cmr10!
 Here is how much of TeX's memory you used:
  12238 strings out of 493335
  240115 string characters out of 3136699
- 289223 words of memory out of 3000000
+ 290224 words of memory out of 3000000
  15523 multiletter control sequences out of 15000+200000
  15990 words of font info for 61 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  55i,12n,54p,1963b,323s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on cos_sim_apprx.dvi (23 pages, 119112 bytes).
+Output written on cos_sim_apprx.dvi (23 pages, 119652 bytes).
